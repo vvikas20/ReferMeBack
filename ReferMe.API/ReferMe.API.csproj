@@ -43,11 +43,28 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.3.1\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Facilities.AspNet.SystemWeb, Version=5.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Facilities.AspNet.SystemWeb.5.0.1\lib\net45\Castle.Facilities.AspNet.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=5.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Windsor.5.0.1\lib\net45\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="Json.Net, Version=1.0.16.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Json.Net.1.0.16\lib\netstandard2.0\Json.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Web.Cors, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.7\lib\net45\System.Web.Cors.dll</HintPath>
     </Reference>
@@ -91,6 +108,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="CastleDI\DependencyInstaller.cs" />
+    <Compile Include="CastleDI\WindsorActivator.cs" />
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
@@ -113,9 +132,21 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ReferMe.Common\ReferMe.Common.csproj">
+      <Project>{C5A6820D-7905-4686-9AA5-746359759BBC}</Project>
+      <Name>ReferMe.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ReferMe.DAL\ReferMe.DAL.csproj">
+      <Project>{5C12DD16-EAE9-472A-BC6B-B2D1CA8E1245}</Project>
+      <Name>ReferMe.DAL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ReferMe.Model\ReferMe.Model.csproj">
-      <Project>{bcadfc2c-c6d1-4319-b7d8-d7f1260f8331}</Project>
+      <Project>{D187014E-8839-4A32-A81C-94FF75695BF3}</Project>
       <Name>ReferMe.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ReferMe.Service\ReferMe.Service.csproj">
+      <Project>{BD28432C-E77B-4384-973E-7FC7B90F8FBB}</Project>
+      <Name>ReferMe.Service</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

@@ -42,6 +42,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserRepository.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ReferMe.DAL\ReferMe.DAL.csproj">
+      <Project>{5C12DD16-EAE9-472A-BC6B-B2D1CA8E1245}</Project>
+      <Name>ReferMe.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ReferMe.Model\ReferMe.Model.csproj">
+      <Project>{D187014E-8839-4A32-A81C-94FF75695BF3}</Project>
+      <Name>ReferMe.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

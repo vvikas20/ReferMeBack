@@ -1,32 +1,99 @@
-﻿using ReferMe.Model.Login;
-using ReferMe.Model.User;
+﻿using Newtonsoft.Json;
+using ReferMe.Common.Contracts;
+using ReferMe.Model.DTO;
+using ReferMe.Service.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web.Http;
 
 namespace ReferMe.API.Controllers
 {
     public class UserController : ApiController
     {
+        ILogService loggerService;
+        IUserService _userService;
+        IEmailService _emailService;
+
+        public UserController(ILogService loggerService, IUserService userService, IEmailService emailService)
+        {
+            this.loggerService = loggerService;
+            this._userService = userService;
+            this._emailService = emailService;
+        }
+
         [HttpPost]
         [Route("api/user/validate")]
-        public User validate([FromBody] Login login)
+        public UserDTO Validate(string email, string password)
         {
-            User loggedInUserDetail = null;
-
-            if (login.UserName == "vvikas20" && login.Password == "vvikas20")
-                loggedInUserDetail = new User()
+            loggerService.Logger().Info("Calling with parameter as : email and password: " + email + " and " + password);
+            UserDTO user = _userService.ValidateUser(email, password);
+            if (user == null)
+            {
+                string payload = JsonConvert.SerializeObject(new
                 {
-                    FirstName = "vikas",
-                    LastName = "singh",
-                    UserName = "vvikas20",
-                    Email = "vsvikassingh49@gmail.com"
-                };
+                    code = HttpStatusCode.Forbidden,
+                    message = "Invalid username or password",
+                    type = "ERROR"
+                });
 
-            return loggedInUserDetail;
+                var response = new HttpResponseMessage(HttpStatusCode.Forbidden)
+                {
+                    Content = new StringContent(payload, Encoding.UTF8, "application/json"),
+                    StatusCode = HttpStatusCode.Forbidden
+                };
+                throw new HttpResponseException(response);
+            }
+            return user;
+        }
+
+        [HttpPost]
+        [Route("api/user/add")]
+        public int Add(UserDTO user)
+        {
+            loggerService.Logger().Info("Calling with parameter as : user: " + user);
+
+            if (_userService.DuplicateEmailAddress(user.EmailAddress))
+            {
+                string payload = JsonConvert.SerializeObject(new
+                {
+                    code = HttpStatusCode.BadRequest,
+                    message = "Email Address already exists",
+                    type = "ERROR"
+                });
+
+                var response = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent(payload, Encoding.UTF8, "application/json"),
+                    StatusCode = HttpStatusCode.BadRequest
+                };
+                throw new HttpResponseException(response);
+            }
+
+            int userId = _userService.SaveOrUpdateUser(user);
+            if (userId > 0)
+            {
+                // _emailService.sendEmail(user.EmailAddress, "Thanks for registering with us.", string.Format("username {0}, password {1}", user.EmailAddress, user.Password));
+            }
+
+            return userId;
+        }
+
+        [HttpGet]
+        [Route("api/user/all")]
+        public IEnumerable<UserDTO> All()
+        {
+            return _userService.AllUser();
+        }
+
+        [HttpDelete]
+        [Route("api/user/delete")]
+        public void DeleteUser(int userId)
+        {
+            _userService.DeleteUser(userId);
         }
     }
 }
