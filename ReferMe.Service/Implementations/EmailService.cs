@@ -12,7 +12,7 @@ namespace ReferMe.Service.Implementations
     {
         public void sendEmail(string emailTo, string subject, string body)
         {
-            string FromMail = "admin@vsvikassingh.co.in";
+            string FromMail = "vsvikassingh49alt@gmail.com";
 
             MailMessage mail = new MailMessage();
             SmtpClient client = new SmtpClient();
@@ -21,12 +21,13 @@ namespace ReferMe.Service.Implementations
             mail.To.Add(emailTo);
             mail.Subject = subject;
             mail.Body = body;
+            mail.IsBodyHtml = true;
 
-            client.Host = "smtpout.secureserver.net";   //-- Donot change.
-            client.Port = 465; //--- Donot change
-            client.EnableSsl = false;//--- Donot change
-            client.UseDefaultCredentials = true;
-            client.Credentials = new System.Net.NetworkCredential("admin@vsvikassingh.co.in", "Password@94");
+            client.Host = "smtp.gmail.com";
+            client.Port = 587;
+            client.Credentials = new System.Net.NetworkCredential("vsvikassingh49alt@gmail.com", "Password@94");
+            client.EnableSsl = true;
+
             client.Send(mail);
         }
     }

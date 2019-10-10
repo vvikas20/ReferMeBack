@@ -8,10 +8,11 @@ using System.Web.Http.Results;
 
 namespace ReferMe.API.Controllers
 {
+    [RoutePrefix("api/application")]
     public class ApplicationController : ApiController
     {
         [HttpGet]
-        [Route("api/application/detail")]
+        [Route("detail")]
         public IHttpActionResult ApplicationDetail()
         {
             return Json(new { heading = "ReferMe Community" });

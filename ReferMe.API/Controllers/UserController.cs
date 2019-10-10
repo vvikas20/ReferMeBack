@@ -12,6 +12,7 @@ using System.Web.Http;
 
 namespace ReferMe.API.Controllers
 {
+    [RoutePrefix("api/user")]
     public class UserController : ApiController
     {
         ILogService loggerService;
@@ -26,7 +27,7 @@ namespace ReferMe.API.Controllers
         }
 
         [HttpPost]
-        [Route("api/user/validate")]
+        [Route("validate")]
         public UserDTO Validate(string email, string password)
         {
             loggerService.Logger().Info("Calling with parameter as : email and password: " + email + " and " + password);
@@ -51,7 +52,7 @@ namespace ReferMe.API.Controllers
         }
 
         [HttpPost]
-        [Route("api/user/add")]
+        [Route("add")]
         public int Add(UserDTO user)
         {
             loggerService.Logger().Info("Calling with parameter as : user: " + user);
@@ -76,21 +77,21 @@ namespace ReferMe.API.Controllers
             int userId = _userService.SaveOrUpdateUser(user);
             if (userId > 0)
             {
-                // _emailService.sendEmail(user.EmailAddress, "Thanks for registering with us.", string.Format("username {0}, password {1}", user.EmailAddress, user.Password));
+                _emailService.sendEmail(user.EmailAddress, "Thanks for registering with us.", string.Format("Your userid is {0}, and password is {1} .<br> Follow the link {2}", user.EmailAddress, user.Password, "http://vsvikassingh.co.in/login"));
             }
 
             return userId;
         }
 
         [HttpGet]
-        [Route("api/user/all")]
+        [Route("all")]
         public IEnumerable<UserDTO> All()
         {
             return _userService.AllUser();
         }
 
         [HttpDelete]
-        [Route("api/user/delete")]
+        [Route("delete")]
         public void DeleteUser(int userId)
         {
             _userService.DeleteUser(userId);
