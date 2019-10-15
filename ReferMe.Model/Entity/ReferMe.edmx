@@ -5,11 +5,26 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="ReferMeModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Post">
+          <Key>
+            <PropertyRef Name="PostID" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PostID" Type="int" Nullable="false" />
+          <Property Name="Company" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="Position" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="MinExp" Type="int" Nullable="false" />
+          <Property Name="MaxExp" Type="int" Nullable="false" />
+          <Property Name="Location" Type="nvarchar" MaxLength="200" />
+          <Property Name="Description" Type="text" />
+          <Property Name="ContactNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="Active" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="UserID" />
           </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="UserID" Type="int" Nullable="false" />
           <Property Name="FirstName" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="MiddleName" Type="nvarchar" MaxLength="50" />
@@ -23,21 +38,90 @@
           <Property Name="Verified" Type="bit" Nullable="false" />
           <Property Name="Active" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="UserPostMapping">
+          <Key>
+            <PropertyRef Name="MappingID" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MappingID" Type="int" Nullable="false" />
+          <Property Name="UserID" Type="int" Nullable="false" />
+          <Property Name="PostID" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_UserPostMapping_Post">
+          <End Role="Post" Type="Self.Post" Multiplicity="1" />
+          <End Role="UserPostMapping" Type="Self.UserPostMapping" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Post">
+              <PropertyRef Name="PostID" />
+            </Principal>
+            <Dependent Role="UserPostMapping">
+              <PropertyRef Name="PostID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserPostMapping_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="UserPostMapping" Type="Self.UserPostMapping" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="UserPostMapping">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="ReferMeModelStoreContainer">
+          <EntitySet Name="Post" EntityType="Self.Post" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserPostMapping" EntityType="Self.UserPostMapping" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_UserPostMapping_Post" Association="Self.FK_UserPostMapping_Post">
+            <End Role="Post" EntitySet="Post" />
+            <End Role="UserPostMapping" EntitySet="UserPostMapping" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserPostMapping_User" Association="Self.FK_UserPostMapping_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="UserPostMapping" EntitySet="UserPostMapping" />
+          </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ReferMeModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="ReferMeEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Post" EntityType="ReferMeModel.Post" />
           <EntitySet Name="User" EntityType="ReferMeModel.User" />
+          <EntitySet Name="UserPostMapping" EntityType="ReferMeModel.UserPostMapping" />
+          <AssociationSet Name="FK_UserPostMapping_Post" Association="ReferMeModel.FK_UserPostMapping_Post">
+            <End Role="Post" EntitySet="Post" />
+            <End Role="UserPostMapping" EntitySet="UserPostMapping" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserPostMapping_User" Association="ReferMeModel.FK_UserPostMapping_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="UserPostMapping" EntitySet="UserPostMapping" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Post">
+          <Key>
+            <PropertyRef Name="PostID" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PostID" Type="Int32" Nullable="false" />
+          <Property Name="Company" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Position" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="MinExp" Type="Int32" Nullable="false" />
+          <Property Name="MaxExp" Type="Int32" Nullable="false" />
+          <Property Name="Location" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ContactNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Active" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="UserPostMapping" Relationship="ReferMeModel.FK_UserPostMapping_Post" FromRole="Post" ToRole="UserPostMapping" />
+        </EntityType>
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="UserID" />
           </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="UserID" Type="Int32" Nullable="false" />
           <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="MiddleName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -50,13 +134,65 @@
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Verified" Type="Boolean" Nullable="false" />
           <Property Name="Active" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="UserPostMapping" Relationship="ReferMeModel.FK_UserPostMapping_User" FromRole="User" ToRole="UserPostMapping" />
         </EntityType>
-      </Schema>
+        <EntityType Name="UserPostMapping">
+          <Key>
+            <PropertyRef Name="MappingID" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MappingID" Type="Int32" Nullable="false" />
+          <Property Name="UserID" Type="Int32" Nullable="false" />
+          <Property Name="PostID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Post" Relationship="ReferMeModel.FK_UserPostMapping_Post" FromRole="UserPostMapping" ToRole="Post" />
+          <NavigationProperty Name="User" Relationship="ReferMeModel.FK_UserPostMapping_User" FromRole="UserPostMapping" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_UserPostMapping_Post">
+          <End Type="ReferMeModel.Post" Role="Post" Multiplicity="1" />
+          <End Type="ReferMeModel.UserPostMapping" Role="UserPostMapping" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Post">
+              <PropertyRef Name="PostID" />
+            </Principal>
+            <Dependent Role="UserPostMapping">
+              <PropertyRef Name="PostID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserPostMapping_User">
+          <End Type="ReferMeModel.User" Role="User" Multiplicity="1" />
+          <End Type="ReferMeModel.UserPostMapping" Role="UserPostMapping" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="UserPostMapping">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="ReferMeModelStoreContainer" CdmEntityContainer="ReferMeEntities">
+          <EntitySetMapping Name="Post">
+            <EntityTypeMapping TypeName="ReferMeModel.Post">
+              <MappingFragment StoreEntitySet="Post">
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="MaxExp" ColumnName="MaxExp" />
+                <ScalarProperty Name="MinExp" ColumnName="MinExp" />
+                <ScalarProperty Name="Position" ColumnName="Position" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="PostID" ColumnName="PostID" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="User">
             <EntityTypeMapping TypeName="ReferMeModel.User">
               <MappingFragment StoreEntitySet="User">
@@ -72,7 +208,17 @@
                 <ScalarProperty Name="MiddleName" ColumnName="MiddleName" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserPostMapping">
+            <EntityTypeMapping TypeName="ReferMeModel.UserPostMapping">
+              <MappingFragment StoreEntitySet="UserPostMapping">
+                <ScalarProperty Name="PostID" ColumnName="PostID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="MappingID" ColumnName="MappingID" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

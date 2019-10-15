@@ -40,12 +40,13 @@ namespace ReferMe.Model.Entity
                 }
             }
         }
-
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
         }
 
+        public DbSet<Post> Post { get; set; }
         public DbSet<User> User { get; set; }
+        public DbSet<UserPostMapping> UserPostMapping { get; set; }
     }
 }

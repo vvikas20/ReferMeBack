@@ -12,25 +12,22 @@ namespace ReferMe.Model.Entity
     using System;
     using System.Collections.Generic;
     
-    public partial class User
+    public partial class Post
     {
-        public User()
+        public Post()
         {
             this.UserPostMapping = new HashSet<UserPostMapping>();
         }
     
         public int id { get; set; }
-        public int UserID { get; set; }
-        public string FirstName { get; set; }
-        public string MiddleName { get; set; }
-        public string LastName { get; set; }
-        public string EmailAddress { get; set; }
-        public string Mobile { get; set; }
-        public string PasswordHash { get; set; }
-        public string PasswordSalt { get; set; }
-        public System.DateTime CreatedOnDate { get; set; }
-        public System.DateTime ModifiedDate { get; set; }
-        public bool Verified { get; set; }
+        public int PostID { get; set; }
+        public string Company { get; set; }
+        public string Position { get; set; }
+        public int MinExp { get; set; }
+        public int MaxExp { get; set; }
+        public string Location { get; set; }
+        public string Description { get; set; }
+        public string ContactNumber { get; set; }
         public bool Active { get; set; }
     
         public virtual ICollection<UserPostMapping> UserPostMapping { get; set; }
