@@ -19,6 +19,17 @@
           <Property Name="Description" Type="text" />
           <Property Name="ContactNumber" Type="nvarchar" MaxLength="50" />
           <Property Name="Active" Type="bit" Nullable="false" />
+          <Property Name="PostedBy" Type="int" Nullable="false" />
+          <Property Name="PostedOn" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Role">
+          <Key>
+            <PropertyRef Name="RoleID" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RoleID" Type="int" Nullable="false" />
+          <Property Name="RoleName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="RoleDisplayName" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -38,50 +49,67 @@
           <Property Name="Verified" Type="bit" Nullable="false" />
           <Property Name="Active" Type="bit" Nullable="false" />
         </EntityType>
-        <EntityType Name="UserPostMapping">
+        <EntityType Name="UserRoleMapping">
           <Key>
-            <PropertyRef Name="MappingID" />
+            <PropertyRef Name="UserRoleMappingID" />
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="MappingID" Type="int" Nullable="false" />
+          <Property Name="UserRoleMappingID" Type="int" Nullable="false" />
           <Property Name="UserID" Type="int" Nullable="false" />
-          <Property Name="PostID" Type="int" Nullable="false" />
+          <Property Name="RoleID" Type="int" Nullable="false" />
         </EntityType>
-        <Association Name="FK_UserPostMapping_Post">
-          <End Role="Post" Type="Self.Post" Multiplicity="1" />
-          <End Role="UserPostMapping" Type="Self.UserPostMapping" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Post">
-              <PropertyRef Name="PostID" />
-            </Principal>
-            <Dependent Role="UserPostMapping">
-              <PropertyRef Name="PostID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UserPostMapping_User">
+        <Association Name="FK_Post_User">
           <End Role="User" Type="Self.User" Multiplicity="1" />
-          <End Role="UserPostMapping" Type="Self.UserPostMapping" Multiplicity="*" />
+          <End Role="Post" Type="Self.Post" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="User">
               <PropertyRef Name="UserID" />
             </Principal>
-            <Dependent Role="UserPostMapping">
+            <Dependent Role="Post">
+              <PropertyRef Name="PostedBy" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserRoleMapping_Role">
+          <End Role="Role" Type="Self.Role" Multiplicity="1" />
+          <End Role="UserRoleMapping" Type="Self.UserRoleMapping" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Role">
+              <PropertyRef Name="RoleID" />
+            </Principal>
+            <Dependent Role="UserRoleMapping">
+              <PropertyRef Name="RoleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserRoleMapping_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="UserRoleMapping" Type="Self.UserRoleMapping" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="UserRoleMapping">
               <PropertyRef Name="UserID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="ReferMeModelStoreContainer">
           <EntitySet Name="Post" EntityType="Self.Post" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="UserPostMapping" EntityType="Self.UserPostMapping" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_UserPostMapping_Post" Association="Self.FK_UserPostMapping_Post">
-            <End Role="Post" EntitySet="Post" />
-            <End Role="UserPostMapping" EntitySet="UserPostMapping" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserPostMapping_User" Association="Self.FK_UserPostMapping_User">
+          <EntitySet Name="UserRoleMapping" EntityType="Self.UserRoleMapping" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Post_User" Association="Self.FK_Post_User">
             <End Role="User" EntitySet="User" />
-            <End Role="UserPostMapping" EntitySet="UserPostMapping" />
+            <End Role="Post" EntitySet="Post" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserRoleMapping_Role" Association="Self.FK_UserRoleMapping_Role">
+            <End Role="Role" EntitySet="Role" />
+            <End Role="UserRoleMapping" EntitySet="UserRoleMapping" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserRoleMapping_User" Association="Self.FK_UserRoleMapping_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="UserRoleMapping" EntitySet="UserRoleMapping" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -90,15 +118,20 @@
       <Schema Namespace="ReferMeModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="ReferMeEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Post" EntityType="ReferMeModel.Post" />
+          <EntitySet Name="Role" EntityType="ReferMeModel.Role" />
           <EntitySet Name="User" EntityType="ReferMeModel.User" />
-          <EntitySet Name="UserPostMapping" EntityType="ReferMeModel.UserPostMapping" />
-          <AssociationSet Name="FK_UserPostMapping_Post" Association="ReferMeModel.FK_UserPostMapping_Post">
-            <End Role="Post" EntitySet="Post" />
-            <End Role="UserPostMapping" EntitySet="UserPostMapping" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserPostMapping_User" Association="ReferMeModel.FK_UserPostMapping_User">
+          <EntitySet Name="UserRoleMapping" EntityType="ReferMeModel.UserRoleMapping" />
+          <AssociationSet Name="FK_Post_User" Association="ReferMeModel.FK_Post_User">
             <End Role="User" EntitySet="User" />
-            <End Role="UserPostMapping" EntitySet="UserPostMapping" />
+            <End Role="Post" EntitySet="Post" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserRoleMapping_Role" Association="ReferMeModel.FK_UserRoleMapping_Role">
+            <End Role="Role" EntitySet="Role" />
+            <End Role="UserRoleMapping" EntitySet="UserRoleMapping" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserRoleMapping_User" Association="ReferMeModel.FK_UserRoleMapping_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="UserRoleMapping" EntitySet="UserRoleMapping" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Post">
@@ -115,7 +148,19 @@
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="ContactNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Active" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="UserPostMapping" Relationship="ReferMeModel.FK_UserPostMapping_Post" FromRole="Post" ToRole="UserPostMapping" />
+          <Property Name="PostedBy" Type="Int32" Nullable="false" />
+          <Property Name="PostedOn" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="User" Relationship="ReferMeModel.FK_Post_User" FromRole="Post" ToRole="User" />
+        </EntityType>
+        <EntityType Name="Role">
+          <Key>
+            <PropertyRef Name="RoleID" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RoleID" Type="Int32" Nullable="false" />
+          <Property Name="RoleName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="RoleDisplayName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="UserRoleMapping" Relationship="ReferMeModel.FK_UserRoleMapping_Role" FromRole="Role" ToRole="UserRoleMapping" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -134,39 +179,52 @@
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Verified" Type="Boolean" Nullable="false" />
           <Property Name="Active" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="UserPostMapping" Relationship="ReferMeModel.FK_UserPostMapping_User" FromRole="User" ToRole="UserPostMapping" />
+          <NavigationProperty Name="Post" Relationship="ReferMeModel.FK_Post_User" FromRole="User" ToRole="Post" />
+          <NavigationProperty Name="UserRoleMapping" Relationship="ReferMeModel.FK_UserRoleMapping_User" FromRole="User" ToRole="UserRoleMapping" />
         </EntityType>
-        <EntityType Name="UserPostMapping">
+        <EntityType Name="UserRoleMapping">
           <Key>
-            <PropertyRef Name="MappingID" />
+            <PropertyRef Name="UserRoleMappingID" />
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="MappingID" Type="Int32" Nullable="false" />
+          <Property Name="UserRoleMappingID" Type="Int32" Nullable="false" />
           <Property Name="UserID" Type="Int32" Nullable="false" />
-          <Property Name="PostID" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Post" Relationship="ReferMeModel.FK_UserPostMapping_Post" FromRole="UserPostMapping" ToRole="Post" />
-          <NavigationProperty Name="User" Relationship="ReferMeModel.FK_UserPostMapping_User" FromRole="UserPostMapping" ToRole="User" />
+          <Property Name="RoleID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Role" Relationship="ReferMeModel.FK_UserRoleMapping_Role" FromRole="UserRoleMapping" ToRole="Role" />
+          <NavigationProperty Name="User" Relationship="ReferMeModel.FK_UserRoleMapping_User" FromRole="UserRoleMapping" ToRole="User" />
         </EntityType>
-        <Association Name="FK_UserPostMapping_Post">
-          <End Type="ReferMeModel.Post" Role="Post" Multiplicity="1" />
-          <End Type="ReferMeModel.UserPostMapping" Role="UserPostMapping" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Post">
-              <PropertyRef Name="PostID" />
-            </Principal>
-            <Dependent Role="UserPostMapping">
-              <PropertyRef Name="PostID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UserPostMapping_User">
+        <Association Name="FK_Post_User">
           <End Type="ReferMeModel.User" Role="User" Multiplicity="1" />
-          <End Type="ReferMeModel.UserPostMapping" Role="UserPostMapping" Multiplicity="*" />
+          <End Type="ReferMeModel.Post" Role="Post" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="User">
               <PropertyRef Name="UserID" />
             </Principal>
-            <Dependent Role="UserPostMapping">
+            <Dependent Role="Post">
+              <PropertyRef Name="PostedBy" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserRoleMapping_Role">
+          <End Type="ReferMeModel.Role" Role="Role" Multiplicity="1" />
+          <End Type="ReferMeModel.UserRoleMapping" Role="UserRoleMapping" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Role">
+              <PropertyRef Name="RoleID" />
+            </Principal>
+            <Dependent Role="UserRoleMapping">
+              <PropertyRef Name="RoleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserRoleMapping_User">
+          <End Type="ReferMeModel.User" Role="User" Multiplicity="1" />
+          <End Type="ReferMeModel.UserRoleMapping" Role="UserRoleMapping" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="UserRoleMapping">
               <PropertyRef Name="UserID" />
             </Dependent>
           </ReferentialConstraint>
@@ -180,6 +238,8 @@
           <EntitySetMapping Name="Post">
             <EntityTypeMapping TypeName="ReferMeModel.Post">
               <MappingFragment StoreEntitySet="Post">
+                <ScalarProperty Name="PostedOn" ColumnName="PostedOn" />
+                <ScalarProperty Name="PostedBy" ColumnName="PostedBy" />
                 <ScalarProperty Name="Active" ColumnName="Active" />
                 <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
@@ -189,6 +249,16 @@
                 <ScalarProperty Name="Position" ColumnName="Position" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
                 <ScalarProperty Name="PostID" ColumnName="PostID" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Role">
+            <EntityTypeMapping TypeName="ReferMeModel.Role">
+              <MappingFragment StoreEntitySet="Role">
+                <ScalarProperty Name="RoleDisplayName" ColumnName="RoleDisplayName" />
+                <ScalarProperty Name="RoleName" ColumnName="RoleName" />
+                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
                 <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -212,12 +282,12 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="UserPostMapping">
-            <EntityTypeMapping TypeName="ReferMeModel.UserPostMapping">
-              <MappingFragment StoreEntitySet="UserPostMapping">
-                <ScalarProperty Name="PostID" ColumnName="PostID" />
+          <EntitySetMapping Name="UserRoleMapping">
+            <EntityTypeMapping TypeName="ReferMeModel.UserRoleMapping">
+              <MappingFragment StoreEntitySet="UserRoleMapping">
+                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="MappingID" ColumnName="MappingID" />
+                <ScalarProperty Name="UserRoleMappingID" ColumnName="UserRoleMappingID" />
                 <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>

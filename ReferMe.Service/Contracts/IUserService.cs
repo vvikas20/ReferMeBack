@@ -13,6 +13,7 @@ namespace ReferMe.Service.Contracts
         int SaveOrUpdateUser(UserDTO customer);
         bool DuplicateEmailAddress(string email);
         IEnumerable<UserDTO> AllUser();
+        UserDTO GetUserByEmail(string email);
         void DeleteUser(int userId);
     }
 }

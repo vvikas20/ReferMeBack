@@ -12,14 +12,18 @@ namespace ReferMe.Model.Entity
     using System;
     using System.Collections.Generic;
     
-    public partial class UserPostMapping
+    public partial class Role
     {
-        public int id { get; set; }
-        public int MappingID { get; set; }
-        public int UserID { get; set; }
-        public int PostID { get; set; }
+        public Role()
+        {
+            this.UserRoleMapping = new HashSet<UserRoleMapping>();
+        }
     
-        public virtual Post Post { get; set; }
-        public virtual User User { get; set; }
+        public int id { get; set; }
+        public int RoleID { get; set; }
+        public string RoleName { get; set; }
+        public string RoleDisplayName { get; set; }
+    
+        public virtual ICollection<UserRoleMapping> UserRoleMapping { get; set; }
     }
 }

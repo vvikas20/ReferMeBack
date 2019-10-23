@@ -5,11 +5,13 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="5711c4953cd441ad91840005a3352443" Name="Diagram1">
-        <EntityTypeShape EntityType="ReferMeModel.Post" Width="1.5" PointX="0.75" PointY="6.25" />
-        <EntityTypeShape EntityType="ReferMeModel.User" Width="1.5" PointX="0.75" PointY="1" />
-        <EntityTypeShape EntityType="ReferMeModel.UserPostMapping" Width="1.5" PointX="3" PointY="1.75" />
-        <AssociationConnector Association="ReferMeModel.FK_UserPostMapping_Post" />
-        <AssociationConnector Association="ReferMeModel.FK_UserPostMapping_User" />
+        <EntityTypeShape EntityType="ReferMeModel.Post" Width="1.5" PointX="3" PointY="6.875" />
+        <EntityTypeShape EntityType="ReferMeModel.Role" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="ReferMeModel.User" Width="1.5" PointX="0.75" PointY="3.75" />
+        <EntityTypeShape EntityType="ReferMeModel.UserRoleMapping" Width="1.5" PointX="3" PointY="3.625" />
+        <AssociationConnector Association="ReferMeModel.FK_Post_User" />
+        <AssociationConnector Association="ReferMeModel.FK_UserRoleMapping_Role" />
+        <AssociationConnector Association="ReferMeModel.FK_UserRoleMapping_User" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

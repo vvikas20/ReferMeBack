@@ -17,5 +17,6 @@ namespace ReferMe.Model.DTO
         public string Location { get; set; }
         public string Contact { get; set; }
         public string Description { get; set; }
+        public DateTime PostedOn { get; set; }
     }
 }

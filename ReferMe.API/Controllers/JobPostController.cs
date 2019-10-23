@@ -1,4 +1,5 @@
-﻿using ReferMe.Common.Contracts;
+﻿using ReferMe.API.Auth;
+using ReferMe.Common.Contracts;
 using ReferMe.Model.DTO;
 using ReferMe.Service.Contracts;
 using System;
@@ -11,6 +12,7 @@ using System.Web.Http;
 namespace ReferMe.API.Controllers
 {
     [RoutePrefix("api/jobpost")]
+    [JwtAuthentication]
     public class JobPostController : ApiController
     {
         ILogService loggerService;

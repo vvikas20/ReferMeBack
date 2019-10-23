@@ -15,5 +15,6 @@ namespace ReferMe.Model.DTO
         public string EmailAddress { get; set; }
         public string Mobile { get; set; }
         public string Password { get; set; }
+        public string UserRole { get; set; }
     }
 }

@@ -16,13 +16,22 @@ namespace ReferMe.Service.Implementations
     {
         IUnitOfWork _unitOfWork;
         IUserRepository _userRepository;
+        IRoleRepository _roleRepository;
+        IPostRepository _postRepository;
+        IUserRoleMappingRepository _userRoleMappingRepository;
 
         public UserService(
             IUnitOfWork unitOfWork,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            IRoleRepository roleRepository,
+            IPostRepository postRepository,
+            IUserRoleMappingRepository userRoleMappingRepository)
         {
             this._unitOfWork = unitOfWork;
             this._userRepository = userRepository;
+            this._roleRepository = roleRepository;
+            this._postRepository = postRepository;
+            this._userRoleMappingRepository = userRoleMappingRepository;
         }
 
         //Below method will create any random strigs of given size. Basically this type of algorithm reads the memory at random locations to form
@@ -88,24 +97,41 @@ namespace ReferMe.Service.Implementations
             objUser.ModifiedDate = DateTime.Now;
 
             if (user.UserID != 0)
+            {
                 _userRepository.Update(objUser);
+                _unitOfWork.Commit();
+            }
             else
+            {
                 _userRepository.Add(objUser);
+                _unitOfWork.Commit();
 
-            _unitOfWork.Commit();
+                Model.Entity.UserRoleMapping roleMapping = new Model.Entity.UserRoleMapping();
+                roleMapping.UserRoleMappingID = getNewUserRoleMappingId();
+                roleMapping.RoleID = 1;
+                roleMapping.UserID = objUser.UserID;
+
+                _userRoleMappingRepository.Add(roleMapping);
+                _unitOfWork.Commit();
+            }
+
             return objUser.UserID;
         }
 
-        private UserDTO CreateUserDTO(Model.Entity.User customer)
+        private UserDTO CreateUserDTO(Model.Entity.User user)
         {
             UserDTO objCustomerDTO = new UserDTO();
-            objCustomerDTO.UserID = customer.UserID;
-            objCustomerDTO.FirstName = customer.FirstName;
-            objCustomerDTO.MiddleName = customer.MiddleName;
-            objCustomerDTO.LastName = customer.LastName;
-            objCustomerDTO.EmailAddress = customer.EmailAddress;
-            objCustomerDTO.Mobile = customer.Mobile;
-
+            if (user != null)
+            {
+                int roleId = user.UserRoleMapping.First().RoleID;
+                objCustomerDTO.UserID = user.UserID;
+                objCustomerDTO.FirstName = user.FirstName;
+                objCustomerDTO.MiddleName = user.MiddleName;
+                objCustomerDTO.LastName = user.LastName;
+                objCustomerDTO.EmailAddress = user.EmailAddress;
+                objCustomerDTO.Mobile = user.Mobile;
+                objCustomerDTO.UserRole = this._roleRepository.Get(r => r.RoleID == roleId).RoleName;
+            }
             return objCustomerDTO;
         }
 
@@ -113,6 +139,12 @@ namespace ReferMe.Service.Implementations
         {
             int userId = _userRepository.GetAll().Count() > 0 ? _userRepository.GetAll().Max(u => u.UserID) + 1 : 1;
             return userId;
+        }
+
+        private int getNewUserRoleMappingId()
+        {
+            int userRoleMappingId = _userRoleMappingRepository.GetAll().Count() > 0 ? _userRoleMappingRepository.GetAll().Max(u => u.UserRoleMappingID) + 1 : 1;
+            return userRoleMappingId;
         }
 
         public bool DuplicateEmailAddress(string email)
@@ -127,10 +159,24 @@ namespace ReferMe.Service.Implementations
             return users;
         }
 
+        public UserDTO GetUserByEmail(string email)
+        {
+            Model.Entity.User user = new Model.Entity.User();
+            user = _userRepository.GetAll().FirstOrDefault(u => u.EmailAddress == email);
+            return CreateUserDTO(user);
+        }
         public void DeleteUser(int userId)
         {
-            _userRepository.Delete(u => u.UserID == userId);
-            _unitOfWork.Commit();
+            Model.Entity.User user = _userRepository.Get(u => u.UserID == userId);
+            if (user != null)
+            {
+                //Remove post and role mappings
+                _postRepository.Delete(p => p.PostedBy == userId);
+                _userRoleMappingRepository.Delete(rm => rm.UserID == userId);
+                _userRepository.Delete(u => u.UserID == userId);
+                _unitOfWork.Commit();
+            }
+
         }
     }
 }

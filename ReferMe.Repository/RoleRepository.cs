@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ReferMe.Repository
 {
-    public class UserPostRepository : Repository<Model.Entity.UserPostMapping>, IUserPostRepository
+    public class RoleRepository : Repository<Model.Entity.Role>, IRoleRepository
     {
         private Model.Entity.ReferMeEntities dataContext;
 
@@ -18,7 +18,7 @@ namespace ReferMe.Repository
             private set;
         }
 
-        public UserPostRepository(IDatabaseFactory databaseFactory)
+        public RoleRepository(IDatabaseFactory databaseFactory)
             : base(databaseFactory)
         {
             DatabaseFactory = databaseFactory;
@@ -30,7 +30,7 @@ namespace ReferMe.Repository
         }
     }
 
-    public interface IUserPostRepository : IRepository<Model.Entity.UserPostMapping>
+    public interface IRoleRepository : IRepository<Model.Entity.Role>
     {
     }
 }

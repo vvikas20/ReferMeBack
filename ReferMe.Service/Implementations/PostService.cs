@@ -14,16 +14,13 @@ namespace ReferMe.Service.Implementations
     {
         IUnitOfWork _unitOfWork;
         IPostRepository _postRepository;
-        IUserPostRepository _userPostRepository;
 
         public PostService(
             IUnitOfWork unitOfWork,
-            IPostRepository postRepository,
-            IUserPostRepository userPostRepository)
+            IPostRepository postRepository)
         {
             this._unitOfWork = unitOfWork;
             this._postRepository = postRepository;
-            this._userPostRepository = userPostRepository;
         }
 
         public int AddPost(PostDTO post)
@@ -37,16 +34,11 @@ namespace ReferMe.Service.Implementations
             objPost.Location = post.Location;
             objPost.ContactNumber = post.Contact;
             objPost.Description = post.Description;
+            objPost.PostedBy = post.UserID;
+            objPost.PostedOn = DateTime.Now;
             _postRepository.Add(objPost);
-            _unitOfWork.Commit();
 
-            Model.Entity.UserPostMapping objUserPostMapping = new Model.Entity.UserPostMapping();
-            objUserPostMapping.MappingID = getNewUserPostMappingId();
-            objUserPostMapping.PostID = objPost.PostID;
-            objUserPostMapping.UserID = post.UserID;
-            _userPostRepository.Add(objUserPostMapping);
             _unitOfWork.Commit();
-
             return objPost.PostID;
 
         }
@@ -57,17 +49,8 @@ namespace ReferMe.Service.Implementations
             return postId;
         }
 
-        private int getNewUserPostMappingId()
-        {
-            int mappingId = _userPostRepository.GetAll().Count() > 0 ? _userPostRepository.GetAll().Max(u => u.MappingID) + 1 : 1;
-            return mappingId;
-        }
-
         public void DeletePost(int postId)
         {
-            _userPostRepository.Delete(u => u.PostID == postId);
-            _unitOfWork.Commit();
-
             _postRepository.Delete(p => p.PostID == postId);
             _unitOfWork.Commit();
         }
@@ -75,19 +58,20 @@ namespace ReferMe.Service.Implementations
         public List<PostDTO> PostsByUserId(int userId)
         {
             List<PostDTO> userPosts = new List<PostDTO>();
-            List<Model.Entity.UserPostMapping> mappings = _userPostRepository.GetMany(p => p.UserID == userId).ToList();
-            foreach (Model.Entity.UserPostMapping mapping in mappings)
+            List<Model.Entity.Post> posts = _postRepository.GetMany(p => p.PostedBy == userId).ToList();
+            foreach (Model.Entity.Post post in posts)
             {
                 userPosts.Add(new PostDTO
                 {
-                    PostID = mapping.Post.PostID,
-                    Company = mapping.Post.Company,
-                    Position = mapping.Post.Position,
-                    MinExp = mapping.Post.MinExp,
-                    MaxExp = mapping.Post.MaxExp,
-                    Location = mapping.Post.Location,
-                    Contact = mapping.Post.ContactNumber,
-                    Description = mapping.Post.Description
+                    PostID = post.PostID,
+                    Company = post.Company,
+                    Position = post.Position,
+                    MinExp = post.MinExp,
+                    MaxExp = post.MaxExp,
+                    Location = post.Location,
+                    Contact = post.ContactNumber,
+                    Description = post.Description,
+                    PostedOn = post.PostedOn
                 });
             }
             return userPosts;
@@ -96,30 +80,31 @@ namespace ReferMe.Service.Implementations
         public List<UserPostDTO> AllPosts()
         {
             List<UserPostDTO> userPosts = new List<UserPostDTO>();
-            List<Model.Entity.UserPostMapping> mappings = _userPostRepository.GetAll().ToList();
-            foreach (Model.Entity.UserPostMapping mapping in mappings)
+            List<Model.Entity.Post> posts = _postRepository.GetAll().ToList();
+            foreach (Model.Entity.Post post in posts)
             {
                 userPosts.Add(
                     new UserPostDTO
                     {
                         PostDetail = new PostDTO
                         {
-                            PostID = mapping.Post.PostID,
-                            Company = mapping.Post.Company,
-                            Position = mapping.Post.Position,
-                            MinExp = mapping.Post.MinExp,
-                            MaxExp = mapping.Post.MaxExp,
-                            Location = mapping.Post.Location,
-                            Contact = mapping.Post.ContactNumber,
-                            Description = mapping.Post.Description
+                            PostID = post.PostID,
+                            Company = post.Company,
+                            Position = post.Position,
+                            MinExp = post.MinExp,
+                            MaxExp = post.MaxExp,
+                            Location = post.Location,
+                            Contact = post.ContactNumber,
+                            Description = post.Description,
+                            PostedOn = post.PostedOn
                         },
                         UserDetail = new UserDTO
                         {
-                            EmailAddress = mapping.User.EmailAddress,
-                            FirstName = mapping.User.FirstName,
-                            MiddleName = mapping.User.MiddleName,
-                            LastName = mapping.User.LastName,
-                            Mobile = mapping.User.Mobile
+                            EmailAddress = post.User.EmailAddress,
+                            FirstName = post.User.FirstName,
+                            MiddleName = post.User.MiddleName,
+                            LastName = post.User.LastName,
+                            Mobile = post.User.Mobile
                         }
                     }
                    );

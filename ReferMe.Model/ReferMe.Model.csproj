@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DTO\PostDTO.cs" />
+    <Compile Include="DTO\RoleDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />
     <Compile Include="DTO\UserPostDTO.cs" />
     <Compile Include="Entity\Post.cs">
@@ -69,10 +70,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ReferMe.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Entity\Role.cs">
+      <DependentUpon>ReferMe.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entity\User.cs">
       <DependentUpon>ReferMe.tt</DependentUpon>
     </Compile>
-    <Compile Include="Entity\UserPostMapping.cs">
+    <Compile Include="Entity\UserRoleMapping.cs">
       <DependentUpon>ReferMe.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
