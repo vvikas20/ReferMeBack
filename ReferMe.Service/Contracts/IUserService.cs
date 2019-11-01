@@ -10,10 +10,12 @@ namespace ReferMe.Service.Contracts
     public interface IUserService
     {
         UserDTO ValidateUser(string email, string password);
-        int SaveOrUpdateUser(UserDTO customer);
+        int SaveUser(UserDTO user);
+        int UpdateUser(UserDTO user);
         bool DuplicateEmailAddress(string email);
         IEnumerable<UserDTO> AllUser();
         UserDTO GetUserByEmail(string email);
+        UserDTO GetUserById(int userId);
         void DeleteUser(int userId);
     }
 }

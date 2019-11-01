@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ReferMe.API.Models;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -36,9 +37,9 @@ namespace ReferMe.API.Auth
                 context.Principal = principal;
             }
         }
-        private static bool ValidateToken(string token, out string useremail)
+        private static bool ValidateToken(string token, out ApplicationUser appUser)
         {
-            useremail = null;
+            appUser = null;
 
             var simplePrinciple = JwtAuthManager.GetPrincipal(token);
             if (simplePrinciple == null)
@@ -51,10 +52,26 @@ namespace ReferMe.API.Auth
             if (!identity.IsAuthenticated)
                 return false;
 
-            var useremailClaim = identity.FindFirst(ClaimTypes.Email);
-            useremail = useremailClaim?.Value;
+            var UserID = identity.FindFirst("UserID");
+            var EmailAddress = identity.FindFirst("EmailAddress");
+            var UserRole = identity.FindFirst("UserRole");
+            var FirstName = identity.FindFirst("FirstName");
+            var MiddleName = identity.FindFirst("MiddleName");
+            var LastName = identity.FindFirst("LastName");
+            var Mobile = identity.FindFirst("Mobile");
 
-            if (string.IsNullOrEmpty(useremail))
+            appUser = new ApplicationUser()
+            {
+                UserID = Int32.Parse(UserID?.Value),
+                EmailAddress = EmailAddress?.Value,
+                UserRole = UserRole?.Value,
+                FirstName = FirstName?.Value,
+                MiddleName = MiddleName?.Value,
+                LastName = LastName?.Value,
+                Mobile = Mobile?.Value
+            };
+
+            if (String.IsNullOrEmpty(appUser.EmailAddress))
                 return false;
 
             // You can implement more validation to check whether username exists in your DB or not or something else. 
@@ -63,14 +80,20 @@ namespace ReferMe.API.Auth
         }
         protected Task<IPrincipal> AuthJwtToken(string token)
         {
-            string useremail;
+            ApplicationUser appUser;
 
-            if (ValidateToken(token, out useremail))
+            if (ValidateToken(token, out appUser))
             {
                 //to get more information from DB in order to build local identity based on username 
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Email, useremail)
+                    new Claim("UserID",appUser.UserID.ToString()),
+                    new Claim("EmailAddress",appUser.EmailAddress),
+                    new Claim("UserRole",appUser.UserRole),
+                    new Claim("FirstName",appUser.FirstName),
+                    new Claim("MiddleName",appUser.MiddleName),
+                    new Claim("LastName",appUser.LastName),
+                    new Claim("Mobile",appUser.Mobile)
                     // you can add more claims if needed like Roles ( Admin or normal user or something else)
                 };
 

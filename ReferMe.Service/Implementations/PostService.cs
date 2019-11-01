@@ -100,6 +100,7 @@ namespace ReferMe.Service.Implementations
                         },
                         UserDetail = new UserDTO
                         {
+                            UserID =post.User.UserID,
                             EmailAddress = post.User.EmailAddress,
                             FirstName = post.User.FirstName,
                             MiddleName = post.User.MiddleName,

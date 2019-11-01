@@ -19,7 +19,13 @@ namespace ReferMe.API.Auth
             {
                 Subject = new ClaimsIdentity(new[]
                         {
-                            new Claim(ClaimTypes.Email, user.EmailAddress)
+                    new Claim("UserID",user.UserID.ToString()),
+                    new Claim("EmailAddress",user.EmailAddress),
+                    new Claim("UserRole",user.UserRole),
+                    new Claim("FirstName",user.FirstName),
+                    new Claim("MiddleName",user.MiddleName),
+                    new Claim("LastName",user.LastName),
+                    new Claim("Mobile",user.Mobile)
                         }),
 
                 Expires = now.AddMinutes(Convert.ToInt32(expire_in_Minutes)),

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web;
 
-namespace ReferMe.Model.DTO
+namespace ReferMe.API.Models
 {
-    public class UserDTO
+    public class ApplicationUser
     {
         public int UserID { get; set; }
         public string FirstName { get; set; }
@@ -14,8 +13,6 @@ namespace ReferMe.Model.DTO
         public string LastName { get; set; }
         public string EmailAddress { get; set; }
         public string Mobile { get; set; }
-        public string Password { get; set; }
         public string UserRole { get; set; }
-        public int UserRoleID { get; set; }
     }
 }

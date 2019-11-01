@@ -56,7 +56,7 @@ namespace ReferMe.API.Controllers
                 throw new HttpResponseException(response);
             }
 
-            int userId = _userService.SaveOrUpdateUser(user);
+            int userId = _userService.SaveUser(user);
             //if (userId > 0)
             //{
             //    _emailService.sendEmail(user.EmailAddress, "Thanks for registering with us.", string.Format("Your userid is {0}, and password is {1} .<br> Follow the link {2}", user.EmailAddress, user.Password, "http://vsvikassingh.co.in/login"));

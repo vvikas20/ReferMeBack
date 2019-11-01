@@ -72,52 +72,58 @@ namespace ReferMe.Service.Implementations
                 return null;
         }
 
-        public int SaveOrUpdateUser(UserDTO user)
+        public int SaveUser(UserDTO user)
         {
             string passwordSalt = CreateSalt(5);
             string pasword = CreatePasswordHash(user.Password, passwordSalt);
-            Model.Entity.User objUser;
 
-            if (user.UserID != 0)
-                objUser = _userRepository.GetById(user.UserID);
-            else
-            {
-                objUser = new Model.Entity.User();
-                objUser.CreatedOnDate = DateTime.Now;
-                objUser.UserID = getNewUserId();
-            }
-
+            Model.Entity.User objUser = new Model.Entity.User();
+            objUser.UserID = getNewUserId();
+            objUser.PasswordHash = pasword;
+            objUser.PasswordSalt = passwordSalt;
             objUser.FirstName = user.FirstName;
             objUser.MiddleName = user.MiddleName;
             objUser.LastName = user.LastName;
             objUser.EmailAddress = user.EmailAddress;
             objUser.Mobile = user.Mobile;
-            objUser.PasswordHash = pasword;
-            objUser.PasswordSalt = passwordSalt;
+            objUser.CreatedOnDate = DateTime.Now;
             objUser.ModifiedDate = DateTime.Now;
 
-            if (user.UserID != 0)
-            {
-                _userRepository.Update(objUser);
-                _unitOfWork.Commit();
-            }
-            else
-            {
-                _userRepository.Add(objUser);
-                _unitOfWork.Commit();
+            _userRepository.Add(objUser);
+            _unitOfWork.Commit();
 
-                Model.Entity.UserRoleMapping roleMapping = new Model.Entity.UserRoleMapping();
-                roleMapping.UserRoleMappingID = getNewUserRoleMappingId();
-                roleMapping.RoleID = 1;
-                roleMapping.UserID = objUser.UserID;
+            Model.Entity.UserRoleMapping roleMapping = new Model.Entity.UserRoleMapping();
+            roleMapping.UserRoleMappingID = getNewUserRoleMappingId();
+            roleMapping.RoleID = 1;
+            roleMapping.UserID = objUser.UserID;
 
-                _userRoleMappingRepository.Add(roleMapping);
-                _unitOfWork.Commit();
-            }
+            _userRoleMappingRepository.Add(roleMapping);
+            _unitOfWork.Commit();
+
 
             return objUser.UserID;
         }
 
+        public int UpdateUser(UserDTO user)
+        {
+            Model.Entity.User objUser = _userRepository.GetById(user.UserID);
+            objUser.FirstName = user.FirstName;
+            objUser.MiddleName = user.MiddleName;
+            objUser.LastName = user.LastName;
+            objUser.Mobile = user.Mobile;
+            objUser.ModifiedDate = DateTime.Now;
+
+            _userRepository.Update(objUser);
+            _unitOfWork.Commit();
+
+            Model.Entity.UserRoleMapping userRoleMapping = _userRoleMappingRepository.Get(m => m.UserID == user.UserID);
+            userRoleMapping.RoleID = user.UserRoleID;
+
+            _userRoleMappingRepository.Update(userRoleMapping);
+            _unitOfWork.Commit();
+
+            return objUser.UserID;
+        }
         private UserDTO CreateUserDTO(Model.Entity.User user)
         {
             UserDTO objCustomerDTO = new UserDTO();
@@ -130,6 +136,7 @@ namespace ReferMe.Service.Implementations
                 objCustomerDTO.LastName = user.LastName;
                 objCustomerDTO.EmailAddress = user.EmailAddress;
                 objCustomerDTO.Mobile = user.Mobile;
+                objCustomerDTO.UserRoleID = this._roleRepository.Get(r => r.RoleID == roleId).RoleID;
                 objCustomerDTO.UserRole = this._roleRepository.Get(r => r.RoleID == roleId).RoleName;
             }
             return objCustomerDTO;
@@ -177,6 +184,13 @@ namespace ReferMe.Service.Implementations
                 _unitOfWork.Commit();
             }
 
+        }
+
+        public UserDTO GetUserById(int userId)
+        {
+            Model.Entity.User user = new Model.Entity.User();
+            user = _userRepository.GetAll().FirstOrDefault(u => u.UserID == userId);
+            return CreateUserDTO(user);
         }
     }
 }

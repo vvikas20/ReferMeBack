@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 using ReferMe.API.Auth;
+using ReferMe.API.Helper;
+using ReferMe.API.Models;
 using ReferMe.Common.Contracts;
 using ReferMe.Model.DTO;
 using ReferMe.Service.Contracts;
@@ -12,7 +14,7 @@ using System.Web.Http;
 
 namespace ReferMe.API.Controllers
 {
-    [RoutePrefix("api/user")]
+    [RoutePrefix("api/users")]
     [JwtAuthentication]
     public class UserController : ApiController
     {
@@ -35,11 +37,26 @@ namespace ReferMe.API.Controllers
         }
 
         [HttpGet]
-        [Route("mydetails")]
+        [Route("my-detail")]
         public UserDTO GetMyDetails()
         {
-            string loggedInUserEmail = (Request.GetRequestContext().Principal.Identity as ClaimsIdentity).FindFirst(ClaimTypes.Email).Value;
-            return _userService.GetUserByEmail(loggedInUserEmail);
+            ApplicationUser applicationUser = RequestContext.GetLoggedInUser();
+            return _userService.GetUserById(applicationUser.UserID);
+        }
+
+        [HttpGet]
+        [Route("user-detail")]
+        public UserDTO GetUserDetails(int userId)
+        {
+            return _userService.GetUserById(userId);
+        }
+
+        [HttpPut]
+        [Route("update")]
+        public int UpdateUser(UserDTO user)
+        {
+            int userId = _userService.UpdateUser(user);
+            return userId;
         }
 
         [HttpDelete]
