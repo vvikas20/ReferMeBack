@@ -12,27 +12,17 @@ namespace ReferMe.Model.Entity
     using System;
     using System.Collections.Generic;
     
-    public partial class Post
+    public partial class Referral
     {
-        public Post()
-        {
-            this.Referral = new HashSet<Referral>();
-        }
-    
         public int id { get; set; }
+        public int ReferralID { get; set; }
         public int PostID { get; set; }
-        public string Company { get; set; }
-        public string Position { get; set; }
-        public int MinExp { get; set; }
-        public int MaxExp { get; set; }
-        public string Location { get; set; }
-        public string Description { get; set; }
-        public string ContactNumber { get; set; }
-        public bool Active { get; set; }
-        public int PostedBy { get; set; }
-        public System.DateTime PostedOn { get; set; }
+        public string Subject { get; set; }
+        public string Message { get; set; }
+        public System.DateTime CreatedOn { get; set; }
+        public int CreatedBy { get; set; }
     
+        public virtual Post Post { get; set; }
         public virtual User User { get; set; }
-        public virtual ICollection<Referral> Referral { get; set; }
     }
 }

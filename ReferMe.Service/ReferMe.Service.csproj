@@ -44,10 +44,12 @@
   <ItemGroup>
     <Compile Include="Contracts\IEmailService.cs" />
     <Compile Include="Contracts\IPostService.cs" />
+    <Compile Include="Contracts\IReferralService.cs" />
     <Compile Include="Contracts\IRoleService.cs" />
     <Compile Include="Contracts\IUserService.cs" />
     <Compile Include="Implementations\EmailService.cs" />
     <Compile Include="Implementations\PostService.cs" />
+    <Compile Include="Implementations\ReferralService.cs" />
     <Compile Include="Implementations\RoleService.cs" />
     <Compile Include="Implementations\UserService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

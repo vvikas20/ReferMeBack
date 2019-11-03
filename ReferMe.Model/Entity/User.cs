@@ -18,6 +18,7 @@ namespace ReferMe.Model.Entity
         {
             this.Post = new HashSet<Post>();
             this.UserRoleMapping = new HashSet<UserRoleMapping>();
+            this.Referral = new HashSet<Referral>();
         }
     
         public int id { get; set; }
@@ -36,5 +37,6 @@ namespace ReferMe.Model.Entity
     
         public virtual ICollection<Post> Post { get; set; }
         public virtual ICollection<UserRoleMapping> UserRoleMapping { get; set; }
+        public virtual ICollection<Referral> Referral { get; set; }
     }
 }
