@@ -11,5 +11,7 @@ namespace ReferMe.Service.Contracts
     {
         int AddReferral(ReferralDTO referral);
         List<ReferralDTO> ReferralsByPostId(int postId);
+        void DeleteReferrals(int userId);
+        List<ReferralDTO> ReferralsByUserId(int userId);
     }
 }

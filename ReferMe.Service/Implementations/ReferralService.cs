@@ -68,6 +68,39 @@ namespace ReferMe.Service.Implementations
             return referralsForPost;
         }
 
+        public List<ReferralDTO> ReferralsByUserId(int userId)
+        {
+            List<ReferralDTO> referralsCreatedByUser = new List<ReferralDTO>();
+            List<Model.Entity.Referral> referrals = _referralRepository.GetMany(p => p.CreatedBy == userId).ToList();
+            foreach (Model.Entity.Referral referral in referrals)
+            {
+                referralsCreatedByUser.Add(new ReferralDTO
+                {
+                    ReferralID = referral.ReferralID,
+                    PostID = referral.PostID,
+                    Subject = referral.Subject,
+                    Message = referral.Message,
+                    CreatedBy = referral.CreatedBy,
+                    CreatedByUserDetail = new UserDTO()
+                    {
+                        FirstName = referral.User.FirstName,
+                        MiddleName = referral.User.MiddleName,
+                        LastName = referral.User.LastName,
+                        EmailAddress = referral.User.EmailAddress,
+                        Mobile = referral.User.Mobile
+
+                    },
+                    CreatedOn = referral.CreatedOn
+                });
+            }
+            return referralsCreatedByUser;
+        }
+
+        public void DeleteReferrals(int userId)
+        {
+            _referralRepository.Delete(p => p.CreatedBy == userId);
+        }
+
         private int getNewReferralId()
         {
             int referralId = _referralRepository.GetAll().Count() > 0 ? _referralRepository.GetAll().Max(u => u.ReferralID) + 1 : 1;

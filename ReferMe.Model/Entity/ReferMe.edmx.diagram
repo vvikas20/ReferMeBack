@@ -15,6 +15,8 @@
         <EntityTypeShape EntityType="ReferMeModel.Referral" Width="1.5" PointX="5.25" PointY="7.5" />
         <AssociationConnector Association="ReferMeModel.FK_Referral_Post" />
         <AssociationConnector Association="ReferMeModel.FK_Referral_User" />
+        <EntityTypeShape EntityType="ReferMeModel.Company" Width="1.5" PointX="3.375" PointY="0.75" />
+        <EntityTypeShape EntityType="ReferMeModel.Location" Width="1.5" PointX="5.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

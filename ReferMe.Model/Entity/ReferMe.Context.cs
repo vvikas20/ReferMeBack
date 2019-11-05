@@ -51,5 +51,7 @@ namespace ReferMe.Model.Entity
         public DbSet<User> User { get; set; }
         public DbSet<UserRoleMapping> UserRoleMapping { get; set; }
         public DbSet<Referral> Referral { get; set; }
+        public DbSet<Company> Company { get; set; }
+        public DbSet<Location> Location { get; set; }
     }
 }

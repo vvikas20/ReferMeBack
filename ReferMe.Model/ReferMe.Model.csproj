@@ -48,11 +48,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTO\CompanyDTO.cs" />
+    <Compile Include="DTO\LocationDTO.cs" />
     <Compile Include="DTO\PostDTO.cs" />
     <Compile Include="DTO\ReferralDTO.cs" />
     <Compile Include="DTO\RoleDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />
     <Compile Include="DTO\UserPostDTO.cs" />
+    <Compile Include="Entity\Company.cs">
+      <DependentUpon>ReferMe.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\Location.cs">
+      <DependentUpon>ReferMe.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entity\Post.cs">
       <DependentUpon>ReferMe.tt</DependentUpon>
     </Compile>

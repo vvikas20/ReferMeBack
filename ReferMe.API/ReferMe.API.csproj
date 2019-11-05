@@ -129,6 +129,8 @@
     <Compile Include="CastleDI\WindsorActivator.cs" />
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\AuthController.cs" />
+    <Compile Include="Controllers\CompanyController.cs" />
+    <Compile Include="Controllers\LocationController.cs" />
     <Compile Include="Controllers\PostController.cs" />
     <Compile Include="Controllers\ReferralController.cs" />
     <Compile Include="Controllers\RoleController.cs" />

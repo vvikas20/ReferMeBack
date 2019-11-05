@@ -14,13 +14,16 @@ namespace ReferMe.Service.Implementations
     {
         IUnitOfWork _unitOfWork;
         IPostRepository _postRepository;
+        IReferralRepository _referralRepository;
 
         public PostService(
             IUnitOfWork unitOfWork,
-            IPostRepository postRepository)
+            IPostRepository postRepository,
+            IReferralRepository referralRepository)
         {
             this._unitOfWork = unitOfWork;
             this._postRepository = postRepository;
+            this._referralRepository = referralRepository;
         }
 
         public int AddPost(PostDTO post)
@@ -51,6 +54,7 @@ namespace ReferMe.Service.Implementations
 
         public void DeletePost(int postId)
         {
+            _referralRepository.Delete(r => r.PostID == postId);
             _postRepository.Delete(p => p.PostID == postId);
             _unitOfWork.Commit();
         }
@@ -100,7 +104,7 @@ namespace ReferMe.Service.Implementations
                         },
                         UserDetail = new UserDTO
                         {
-                            UserID =post.User.UserID,
+                            UserID = post.User.UserID,
                             EmailAddress = post.User.EmailAddress,
                             FirstName = post.User.FirstName,
                             MiddleName = post.User.MiddleName,

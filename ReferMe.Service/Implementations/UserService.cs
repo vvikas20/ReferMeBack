@@ -20,18 +20,25 @@ namespace ReferMe.Service.Implementations
         IPostRepository _postRepository;
         IUserRoleMappingRepository _userRoleMappingRepository;
 
+        IPostService _postService;
+        IReferralService _referralService;
+
         public UserService(
             IUnitOfWork unitOfWork,
             IUserRepository userRepository,
             IRoleRepository roleRepository,
             IPostRepository postRepository,
-            IUserRoleMappingRepository userRoleMappingRepository)
+            IUserRoleMappingRepository userRoleMappingRepository,
+            IPostService postService,
+            IReferralService referralService)
         {
             this._unitOfWork = unitOfWork;
             this._userRepository = userRepository;
             this._roleRepository = roleRepository;
             this._postRepository = postRepository;
             this._userRoleMappingRepository = userRoleMappingRepository;
+            this._postService = postService;
+            this._referralService = referralService;
         }
 
         //Below method will create any random strigs of given size. Basically this type of algorithm reads the memory at random locations to form
@@ -172,14 +179,23 @@ namespace ReferMe.Service.Implementations
             user = _userRepository.GetAll().FirstOrDefault(u => u.EmailAddress == email);
             return CreateUserDTO(user);
         }
+
         public void DeleteUser(int userId)
         {
             Model.Entity.User user = _userRepository.Get(u => u.UserID == userId);
             if (user != null)
             {
-                //Remove post and role mappings
-                _postRepository.Delete(p => p.PostedBy == userId);
+                //Remove posts
+                var posts = _postService.PostsByUserId(userId);
+                posts.ForEach(post => _postService.DeletePost(post.PostID));
+
+                //Delete all referral created by user
+                _referralService.DeleteReferrals(userId);
+
+                //Delete user role mapping 
                 _userRoleMappingRepository.Delete(rm => rm.UserID == userId);
+
+                //Now Delete user object
                 _userRepository.Delete(u => u.UserID == userId);
                 _unitOfWork.Commit();
             }
