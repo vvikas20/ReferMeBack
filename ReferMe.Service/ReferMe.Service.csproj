@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Contracts\ICompanyService.cs" />
     <Compile Include="Contracts\IEmailService.cs" />
+    <Compile Include="Contracts\IHelper.cs" />
     <Compile Include="Contracts\ILocationService.cs" />
     <Compile Include="Contracts\IPostService.cs" />
     <Compile Include="Contracts\IReferralService.cs" />
@@ -51,6 +52,7 @@
     <Compile Include="Contracts\IUserService.cs" />
     <Compile Include="Implementations\CompanyService.cs" />
     <Compile Include="Implementations\EmailService.cs" />
+    <Compile Include="Implementations\HelperService.cs" />
     <Compile Include="Implementations\LocationService.cs" />
     <Compile Include="Implementations\PostService.cs" />
     <Compile Include="Implementations\ReferralService.cs" />

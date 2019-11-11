@@ -2,6 +2,7 @@
 using ReferMe.API.Helper;
 using ReferMe.API.Models;
 using ReferMe.Common.Contracts;
+using ReferMe.Model.common;
 using ReferMe.Model.DTO;
 using ReferMe.Service.Contracts;
 using System;
@@ -13,7 +14,7 @@ using System.Web.Http;
 
 namespace ReferMe.API.Controllers
 {
-    [RoutePrefix("api/posts")]
+    [RoutePrefix("api/jobposts")]
     [JwtAuthentication]
     public class PostController : ApiController
     {
@@ -37,17 +38,19 @@ namespace ReferMe.API.Controllers
             return postId;
         }
 
-        [HttpGet]
-        [Route("my")]
-        public IEnumerable<PostDTO> PostsByMe()
+        [HttpPost]
+        [Route("my-posts")]
+        public IEnumerable<PostDTO> MyPosts(SearchParameter searchParameter)
         {
+            if (searchParameter == null) searchParameter = new SearchParameter();
+
             ApplicationUser applicationUser = RequestContext.GetLoggedInUser();
-            return _postService.PostsByUserId(applicationUser.UserID);
+            return _postService.PostsByUserId(applicationUser.UserID, searchParameter);
         }
 
         [HttpGet]
-        [Route("others")]
-        public IEnumerable<UserPostDTO> PostedByOthers()
+        [Route("jobs")]
+        public IEnumerable<UserPostDTO> Jobs(SearchParameter searchParameter)
         {
             ApplicationUser applicationUser = RequestContext.GetLoggedInUser();
             List<UserPostDTO> allPosts = _postService.AllPosts();

@@ -1,4 +1,6 @@
 ﻿using ReferMe.DAL.Contracts;
+using ReferMe.Model.common;
+using ReferMe.Model.Common;
 using ReferMe.Model.DTO;
 using ReferMe.Repository;
 using ReferMe.Service.Contracts;
@@ -15,15 +17,18 @@ namespace ReferMe.Service.Implementations
         IUnitOfWork _unitOfWork;
         IPostRepository _postRepository;
         IReferralRepository _referralRepository;
+        IHelper _expressionBuilderService;
 
         public PostService(
             IUnitOfWork unitOfWork,
             IPostRepository postRepository,
-            IReferralRepository referralRepository)
+            IReferralRepository referralRepository,
+            IHelper expressionBuilderService)
         {
             this._unitOfWork = unitOfWork;
             this._postRepository = postRepository;
             this._referralRepository = referralRepository;
+            this._expressionBuilderService = expressionBuilderService;
         }
 
         public int AddPost(PostDTO post)
@@ -59,10 +64,61 @@ namespace ReferMe.Service.Implementations
             _unitOfWork.Commit();
         }
 
-        public List<PostDTO> PostsByUserId(int userId)
+        public List<PostDTO> PostsByUserId(int userId, SearchParameter searchParameter)
         {
             List<PostDTO> userPosts = new List<PostDTO>();
-            List<Model.Entity.Post> posts = _postRepository.GetMany(p => p.PostedBy == userId).ToList();
+            var posts = _postRepository.GetMany(p => p.PostedBy == userId).ToList();
+
+            IQueryable<Model.Entity.Post> queryResult = posts.AsQueryable();
+            if (searchParameter.Filters != null && searchParameter.Filters.Count > 0)
+            {
+                List<Filter> clause = new List<Filter>();
+                searchParameter.Filters.ForEach(f =>
+                {
+                    if (f.Field == "company")
+                    {
+                        clause.Add(new Filter
+                        {
+                            PropertyName = "Company",
+                            Operation = Op.Contains,
+                            Value = f.Value
+                        });
+                    }
+                    if (f.Field == "location")
+                    {
+                        clause.Add(new Filter
+                        {
+                            PropertyName = "Location",
+                            Operation = Op.Contains,
+                            Value = f.Value
+                        });
+                    }
+                    if (f.Field == "minExp")
+                    {
+                        clause.Add(new Filter
+                        {
+                            PropertyName = "MinExp",
+                            Operation = Op.GreaterThanOrEqual,
+                            Value = f.Value
+                        });
+                    }
+                    if (f.Field == "maxExp")
+                    {
+                        clause.Add(new Filter
+                        {
+                            PropertyName = "MaxExp",
+                            Operation = Op.LessThanOrEqual,
+                            Value = f.Value
+                        });
+                    }
+                });
+                var deleg = _expressionBuilderService.GetExpression<Model.Entity.Post>(clause).Compile();
+                queryResult = posts.Where(deleg).AsQueryable();
+            }
+
+            MyPagination pagination=new MyPagination(queryResult.Count(), searchParameter.Rows);
+            posts = _expressionBuilderService.PagedIndex(queryResult, pagination,searchParameter.Page).ToList();
+
             foreach (Model.Entity.Post post in posts)
             {
                 userPosts.Add(new PostDTO

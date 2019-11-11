@@ -186,7 +186,7 @@ namespace ReferMe.Service.Implementations
             if (user != null)
             {
                 //Remove posts
-                var posts = _postService.PostsByUserId(userId);
+                var posts = _postService.PostsByUserId(userId, new Model.common.SearchParameter());
                 posts.ForEach(post => _postService.DeletePost(post.PostID));
 
                 //Delete all referral created by user

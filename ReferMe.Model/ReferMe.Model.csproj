@@ -48,6 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\ExpressionBuilder.cs" />
+    <Compile Include="Common\MyPagination.cs" />
+    <Compile Include="Common\SearchParameter.cs" />
     <Compile Include="DTO\CompanyDTO.cs" />
     <Compile Include="DTO\LocationDTO.cs" />
     <Compile Include="DTO\PostDTO.cs" />
