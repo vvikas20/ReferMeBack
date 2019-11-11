@@ -48,12 +48,14 @@ namespace ReferMe.API.Controllers
             return _postService.PostsByUserId(applicationUser.UserID, searchParameter);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("jobs")]
         public IEnumerable<UserPostDTO> Jobs(SearchParameter searchParameter)
         {
+            if (searchParameter == null) searchParameter = new SearchParameter();
+
             ApplicationUser applicationUser = RequestContext.GetLoggedInUser();
-            List<UserPostDTO> allPosts = _postService.AllPosts();
+            List<UserPostDTO> allPosts = _postService.AllPosts(searchParameter);
 
             return allPosts.Where(j => j.UserDetail.UserID != applicationUser.UserID).ToList();
         }

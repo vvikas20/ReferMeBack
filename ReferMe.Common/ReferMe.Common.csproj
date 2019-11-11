@@ -45,6 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts\ILogService.cs" />
+    <Compile Include="Helper\ExpressionBuilder.cs" />
+    <Compile Include="Helper\PaginationExtensions.cs" />
     <Compile Include="Implementations\LogService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -4,9 +4,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReferMe.Model.common
+namespace ReferMe.Common.Helper
 {
-    public class MyPagination
+    public static class PaginationExtensions
+    {
+        public static IQueryable<t> PagedIndex<t>(this IQueryable<t> query, Pagination pagination, int pageIndex) //where T : Entity
+        {
+            if (pageIndex < pagination.MinPage || pageIndex > pagination.MaxPage)
+            {
+                throw new ArgumentOutOfRangeException(null,
+                $"*** Page index must >= {pagination.MinPage} and =< { pagination.MaxPage }!***");
+            }
+
+            // Return IQueryable<t> to enable chained-methods calls
+            return query
+                //.OrderBy(T => T.EntityProperty) [NOT this extension responsibility]
+                .Skip(GetSkip(pageIndex, pagination.PageSize))
+                .Take(pagination.PageSize);
+        }
+
+        private static int GetSkip(int pageIndex, int take)
+        {
+            return (pageIndex - 1) * take;
+        }
+    }
+
+    public class Pagination
     {
         public int TotalItems { get; private set; } // Equal to PageSize * MaxPage
         public int PageSize { get; private set; } // Number of items per page
@@ -14,7 +37,7 @@ namespace ReferMe.Model.common
         { get; private set; } = 1; // Page index starting from MinPage to MaxPage
         public int MaxPage { get; private set; } //Total pages
 
-        public MyPagination(int totalItems, int itemsPerPage)
+        public Pagination(int totalItems, int itemsPerPage)
         {
             if (itemsPerPage < MinPage)
             {
