@@ -1,4 +1,5 @@
-﻿using ReferMe.Model.common;
+﻿using ReferMe.Common.Helper;
+using ReferMe.Model.common;
 using ReferMe.Model.DTO;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,9 @@ namespace ReferMe.Service.Contracts
     {
         int AddPost(PostDTO post);
         void DeletePost(int postId);
-        List<PostDTO> PostsByUserId(int userId, SearchParameter searchParameter);
-        List<UserPostDTO> AllPosts(SearchParameter searchParameter);
+        List<PostDTO> PostsByUserId(int userId);
+        PagedList<PostDTO> FilteredPostsByUserId(int userId, SearchParameter searchParameter);
+        List<UserPostDTO> AllJobs(int loggedInUserId);
+        PagedList<UserPostDTO> FilteredAllJobs(int loggedInUserId, SearchParameter searchParameter);
     }
 }

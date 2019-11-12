@@ -2,6 +2,7 @@
 using ReferMe.API.Helper;
 using ReferMe.API.Models;
 using ReferMe.Common.Contracts;
+using ReferMe.Common.Helper;
 using ReferMe.Model.common;
 using ReferMe.Model.DTO;
 using ReferMe.Service.Contracts;
@@ -40,24 +41,22 @@ namespace ReferMe.API.Controllers
 
         [HttpPost]
         [Route("my-posts")]
-        public IEnumerable<PostDTO> MyPosts(SearchParameter searchParameter)
+        public PagedList<PostDTO> MyPosts(SearchParameter searchParameter)
         {
             if (searchParameter == null) searchParameter = new SearchParameter();
 
             ApplicationUser applicationUser = RequestContext.GetLoggedInUser();
-            return _postService.PostsByUserId(applicationUser.UserID, searchParameter);
+            return _postService.FilteredPostsByUserId(applicationUser.UserID, searchParameter);
         }
 
         [HttpPost]
         [Route("jobs")]
-        public IEnumerable<UserPostDTO> Jobs(SearchParameter searchParameter)
+        public PagedList<UserPostDTO> Jobs(SearchParameter searchParameter)
         {
             if (searchParameter == null) searchParameter = new SearchParameter();
 
             ApplicationUser applicationUser = RequestContext.GetLoggedInUser();
-            List<UserPostDTO> allPosts = _postService.AllPosts(searchParameter);
-
-            return allPosts.Where(j => j.UserDetail.UserID != applicationUser.UserID).ToList();
+            return _postService.FilteredAllJobs(applicationUser.UserID, searchParameter);
         }
 
         [HttpDelete]

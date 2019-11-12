@@ -10,7 +10,7 @@ namespace ReferMe.Common.Helper
     {
         public static IQueryable<t> PagedIndex<t>(this IQueryable<t> query, Pagination pagination, int pageIndex) //where T : Entity
         {
-            if (pageIndex < pagination.MinPage || pageIndex > pagination.MaxPage)
+            if (pageIndex < pagination.MinPage || (pageIndex > pagination.MaxPage && pagination.TotalItems > 0))
             {
                 throw new ArgumentOutOfRangeException(null,
                 $"*** Page index must >= {pagination.MinPage} and =< { pagination.MaxPage }!***");

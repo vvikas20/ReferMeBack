@@ -63,12 +63,34 @@ namespace ReferMe.Service.Implementations
             _unitOfWork.Commit();
         }
 
-        public List<PostDTO> PostsByUserId(int userId, SearchParameter searchParameter)
+        public List<PostDTO> PostsByUserId(int userId)
         {
-            List<PostDTO> userPosts = new List<PostDTO>();
-            var posts = _postRepository.GetMany(p => p.PostedBy == userId).ToList();
+            List<PostDTO> posts = new List<PostDTO>();
+            var postEntities = _postRepository.GetMany(p => p.PostedBy == userId).ToList();
+            foreach (Model.Entity.Post post in postEntities)
+            {
+                posts.Add(new PostDTO
+                {
+                    PostID = post.PostID,
 
-            IQueryable<Model.Entity.Post> queryResult = posts.AsQueryable();
+                    Company = post.Company,
+                    Position = post.Position,
+                    MinExp = post.MinExp,
+                    MaxExp = post.MaxExp,
+                    Location = post.Location,
+                    Contact = post.ContactNumber,
+                    Description = post.Description,
+                    PostedOn = post.PostedOn
+                });
+            }
+            return posts;
+        }
+
+        public PagedList<PostDTO> FilteredPostsByUserId(int userId, SearchParameter searchParameter)
+        {
+            List<PostDTO> posts = new List<PostDTO>();
+
+            IQueryable<Model.Entity.Post> queryResult = _postRepository.GetMany(p => p.PostedBy == userId).AsQueryable();
             if (searchParameter.Filters != null && searchParameter.Filters.Count > 0)
             {
                 List<Filter> clause = new List<Filter>();
@@ -111,23 +133,19 @@ namespace ReferMe.Service.Implementations
                         });
                     }
                 });
+
                 var deleg = ExpressionBuilder.GetExpression<Model.Entity.Post>(clause).Compile();
-                queryResult = posts.Where(deleg).AsQueryable();
+                queryResult = queryResult.Where(deleg).AsQueryable();
             }
 
-            if (queryResult.Count() > 0)
-            {
-                Pagination pagination = new Pagination(queryResult.Count(), searchParameter.Rows);
-                posts = queryResult.PagedIndex(pagination, searchParameter.Page).ToList();
-            }
-            else
-            {
-                posts = new List<Model.Entity.Post>();
-            }
 
-            foreach (Model.Entity.Post post in posts)
+            Pagination pagination = new Pagination(queryResult.Count(), searchParameter.Rows);
+            queryResult = queryResult.PagedIndex(pagination, searchParameter.Page);
+
+
+            foreach (Model.Entity.Post post in queryResult)
             {
-                userPosts.Add(new PostDTO
+                posts.Add(new PostDTO
                 {
                     PostID = post.PostID,
                     Company = post.Company,
@@ -140,74 +158,17 @@ namespace ReferMe.Service.Implementations
                     PostedOn = post.PostedOn
                 });
             }
-            return userPosts;
+
+            return new PagedList<PostDTO>(posts.AsQueryable(), searchParameter.Page, pagination.PageSize, pagination.MaxPage, pagination.TotalItems);
         }
 
-        public List<UserPostDTO> AllPosts(SearchParameter searchParameter)
+        public List<UserPostDTO> AllJobs(int loggedInUserId)
         {
-            List<UserPostDTO> userPosts = new List<UserPostDTO>();
-            List<Model.Entity.Post> posts = _postRepository.GetAll().ToList();
-
-            IQueryable<Model.Entity.Post> queryResult = posts.AsQueryable();
-            if (searchParameter.Filters != null && searchParameter.Filters.Count > 0)
+            List<UserPostDTO> jobs = new List<UserPostDTO>();
+            List<Model.Entity.Post> jobEntities = _postRepository.GetAll().Where(p => p.PostedBy != loggedInUserId).ToList();
+            foreach (Model.Entity.Post post in jobEntities)
             {
-                List<Filter> clause = new List<Filter>();
-                searchParameter.Filters.ForEach(f =>
-                {
-                    if (f.Field == "company")
-                    {
-                        clause.Add(new Filter
-                        {
-                            PropertyName = "Company",
-                            Operation = Op.Contains,
-                            Value = f.Value
-                        });
-                    }
-                    if (f.Field == "location")
-                    {
-                        clause.Add(new Filter
-                        {
-                            PropertyName = "Location",
-                            Operation = Op.Contains,
-                            Value = f.Value
-                        });
-                    }
-                    if (f.Field == "minExp")
-                    {
-                        clause.Add(new Filter
-                        {
-                            PropertyName = "MinExp",
-                            Operation = Op.GreaterThanOrEqual,
-                            Value = Int32.Parse(f.Value)
-                        });
-                    }
-                    if (f.Field == "maxExp")
-                    {
-                        clause.Add(new Filter
-                        {
-                            PropertyName = "MaxExp",
-                            Operation = Op.LessThanOrEqual,
-                            Value = Int32.Parse(f.Value)
-                        });
-                    }
-                });
-                var deleg = ExpressionBuilder.GetExpression<Model.Entity.Post>(clause).Compile();
-                queryResult = posts.Where(deleg).AsQueryable();
-            }
-
-            if (queryResult.Count() > 0)
-            {
-                Pagination pagination = new Pagination(queryResult.Count(), searchParameter.Rows);
-                posts = queryResult.PagedIndex(pagination, searchParameter.Page).ToList();
-            }
-            else
-            {
-                posts = new List<Model.Entity.Post>();
-            }
-
-            foreach (Model.Entity.Post post in posts)
-            {
-                userPosts.Add(
+                jobs.Add(
                     new UserPostDTO
                     {
                         PostDetail = new PostDTO
@@ -234,7 +195,97 @@ namespace ReferMe.Service.Implementations
                     }
                    );
             }
-            return userPosts;
+
+            return jobs;
+        }
+
+        public PagedList<UserPostDTO> FilteredAllJobs(int loggedInUserId, SearchParameter searchParameter)
+        {
+            List<UserPostDTO> jobs = new List<UserPostDTO>();
+            IQueryable<Model.Entity.Post> queryResult = _postRepository.GetAll().Where(p => p.PostedBy != loggedInUserId).AsQueryable();
+
+            if (searchParameter.Filters != null && searchParameter.Filters.Count > 0)
+            {
+                List<Filter> clause = new List<Filter>();
+                searchParameter.Filters.ForEach(f =>
+                {
+                    if (f.Field == "company")
+                    {
+                        clause.Add(new Filter
+                        {
+                            PropertyName = "Company",
+                            Operation = Op.Contains,
+                            Value = f.Value
+                        });
+                    }
+                    if (f.Field == "location")
+                    {
+                        clause.Add(new Filter
+                        {
+                            PropertyName = "Location",
+                            Operation = Op.Contains,
+                            Value = f.Value
+                        });
+                    }
+                    if (f.Field == "minExp")
+                    {
+                        clause.Add(new Filter
+                        {
+                            PropertyName = "MinExp",
+                            Operation = Op.GreaterThanOrEqual,
+                            Value = Int32.Parse(f.Value)
+                        });
+                    }
+                    if (f.Field == "maxExp")
+                    {
+                        clause.Add(new Filter
+                        {
+                            PropertyName = "MaxExp",
+                            Operation = Op.LessThanOrEqual,
+                            Value = Int32.Parse(f.Value)
+                        });
+                    }
+                });
+                var deleg = ExpressionBuilder.GetExpression<Model.Entity.Post>(clause).Compile();
+                queryResult = queryResult.Where(deleg).AsQueryable();
+            }
+
+
+            Pagination pagination = new Pagination(queryResult.Count(), searchParameter.Rows);
+            queryResult = queryResult.PagedIndex(pagination, searchParameter.Page).AsQueryable();
+
+
+            foreach (Model.Entity.Post post in queryResult)
+            {
+                jobs.Add(
+                    new UserPostDTO
+                    {
+                        PostDetail = new PostDTO
+                        {
+                            PostID = post.PostID,
+                            Company = post.Company,
+                            Position = post.Position,
+                            MinExp = post.MinExp,
+                            MaxExp = post.MaxExp,
+                            Location = post.Location,
+                            Contact = post.ContactNumber,
+                            Description = post.Description,
+                            PostedOn = post.PostedOn
+                        },
+                        UserDetail = new UserDTO
+                        {
+                            UserID = post.User.UserID,
+                            EmailAddress = post.User.EmailAddress,
+                            FirstName = post.User.FirstName,
+                            MiddleName = post.User.MiddleName,
+                            LastName = post.User.LastName,
+                            Mobile = post.User.Mobile
+                        }
+                    }
+                   );
+            }
+
+            return new PagedList<UserPostDTO>(jobs.AsQueryable(), searchParameter.Page, pagination.PageSize, pagination.MaxPage, pagination.TotalItems);
         }
     }
 }
