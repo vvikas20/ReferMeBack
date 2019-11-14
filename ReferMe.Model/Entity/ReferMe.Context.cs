@@ -46,12 +46,12 @@ namespace ReferMe.Model.Entity
             throw new UnintentionalCodeFirstException();
         }
 
-        public DbSet<Post> Post { get; set; }
         public DbSet<Role> Role { get; set; }
         public DbSet<User> User { get; set; }
         public DbSet<UserRoleMapping> UserRoleMapping { get; set; }
         public DbSet<Referral> Referral { get; set; }
         public DbSet<Company> Company { get; set; }
         public DbSet<Location> Location { get; set; }
+        public DbSet<Post> Post { get; set; }
     }
 }

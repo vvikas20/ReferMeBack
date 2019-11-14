@@ -7,10 +7,6 @@ using ReferMe.Service.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Filter = ReferMe.Common.Helper.Filter;
-using Op = ReferMe.Common.Helper.Op;
 
 namespace ReferMe.Service.Implementations
 {
@@ -41,6 +37,7 @@ namespace ReferMe.Service.Implementations
             objPost.Location = post.Location;
             objPost.ContactNumber = post.Contact;
             objPost.Description = post.Description;
+            objPost.Keywords = string.Join("##", post.Keywords.ToArray());
             objPost.PostedBy = post.UserID;
             objPost.PostedOn = DateTime.Now;
             _postRepository.Add(objPost);
@@ -72,7 +69,6 @@ namespace ReferMe.Service.Implementations
                 posts.Add(new PostDTO
                 {
                     PostID = post.PostID,
-
                     Company = post.Company,
                     Position = post.Position,
                     MinExp = post.MinExp,
@@ -80,6 +76,7 @@ namespace ReferMe.Service.Implementations
                     Location = post.Location,
                     Contact = post.ContactNumber,
                     Description = post.Description,
+                    Keywords = string.IsNullOrWhiteSpace(post.Keywords) ? new List<string>() : post.Keywords.Split(new[] { "##" }, StringSplitOptions.None).ToList(),
                     PostedOn = post.PostedOn
                 });
             }
@@ -90,58 +87,48 @@ namespace ReferMe.Service.Implementations
         {
             List<PostDTO> posts = new List<PostDTO>();
 
-            IQueryable<Model.Entity.Post> queryResult = _postRepository.GetMany(p => p.PostedBy == userId).AsQueryable();
+            var predicate = PredicateBuilder.True<Model.Entity.Post>();
+            predicate = predicate.And(i => i.PostedBy == userId);
             if (searchParameter.Filters != null && searchParameter.Filters.Count > 0)
             {
-                List<Filter> clause = new List<Filter>();
                 searchParameter.Filters.ForEach(f =>
                 {
+                    if (f.Field == "keywords")
+                    {
+                        var subPredicate = PredicateBuilder.False<Model.Entity.Post>();
+                        List<string> keys = f.Value.Split(new[] { "##" }, StringSplitOptions.None).ToList();
+                        keys.ForEach(key =>
+                        {
+                            subPredicate = subPredicate.Or(i => i.Keywords.ToLower().Contains(key.ToLower()));
+                        });
+
+                        predicate = predicate.And(subPredicate);
+                    }
                     if (f.Field == "company")
                     {
-                        clause.Add(new Filter
-                        {
-                            PropertyName = "Company",
-                            Operation = Op.Contains,
-                            Value = f.Value
-                        });
+                        predicate = predicate.And(i => i.Company.ToLower().Contains(f.Value.ToLower()));
                     }
                     if (f.Field == "location")
                     {
-                        clause.Add(new Filter
-                        {
-                            PropertyName = "Location",
-                            Operation = Op.Contains,
-                            Value = f.Value
-                        });
+                        predicate = predicate.And(i => i.Location.ToLower().Contains(f.Value.ToLower()));
                     }
                     if (f.Field == "minExp")
                     {
-                        clause.Add(new Filter
-                        {
-                            PropertyName = "MinExp",
-                            Operation = Op.GreaterThanOrEqual,
-                            Value = Int32.Parse(f.Value)
-                        });
+                        int min = int.Parse(f.Value);
+                        predicate = predicate.And(i => i.MinExp >= min);
                     }
                     if (f.Field == "maxExp")
                     {
-                        clause.Add(new Filter
-                        {
-                            PropertyName = "MaxExp",
-                            Operation = Op.LessThanOrEqual,
-                            Value = Int32.Parse(f.Value)
-                        });
+                        int max = int.Parse(f.Value);
+                        predicate = predicate.And(i => i.MaxExp <= max);
                     }
                 });
-
-                var deleg = ExpressionBuilder.GetExpression<Model.Entity.Post>(clause).Compile();
-                queryResult = queryResult.Where(deleg).AsQueryable();
             }
 
+            IQueryable<Model.Entity.Post> queryResult = _postRepository.GetMany(predicate).AsQueryable();
 
             Pagination pagination = new Pagination(queryResult.Count(), searchParameter.Rows);
             queryResult = queryResult.PagedIndex(pagination, searchParameter.Page);
-
 
             foreach (Model.Entity.Post post in queryResult)
             {
@@ -155,6 +142,7 @@ namespace ReferMe.Service.Implementations
                     Location = post.Location,
                     Contact = post.ContactNumber,
                     Description = post.Description,
+                    Keywords = string.IsNullOrWhiteSpace(post.Keywords) ? new List<string>() : post.Keywords.Split(new[] { "##" }, StringSplitOptions.None).ToList(),
                     PostedOn = post.PostedOn
                 });
             }
@@ -181,6 +169,7 @@ namespace ReferMe.Service.Implementations
                             Location = post.Location,
                             Contact = post.ContactNumber,
                             Description = post.Description,
+                            Keywords = string.IsNullOrWhiteSpace(post.Keywords) ? new List<string>() : post.Keywords.Split(new[] { "##" }, StringSplitOptions.None).ToList(),
                             PostedOn = post.PostedOn
                         },
                         UserDetail = new UserDTO
@@ -202,58 +191,49 @@ namespace ReferMe.Service.Implementations
         public PagedList<UserPostDTO> FilteredAllJobs(int loggedInUserId, SearchParameter searchParameter)
         {
             List<UserPostDTO> jobs = new List<UserPostDTO>();
-            IQueryable<Model.Entity.Post> queryResult = _postRepository.GetAll().Where(p => p.PostedBy != loggedInUserId).AsQueryable();
 
+            var predicate = PredicateBuilder.True<Model.Entity.Post>();
+            predicate = predicate.And(i => i.PostedBy != loggedInUserId);
             if (searchParameter.Filters != null && searchParameter.Filters.Count > 0)
             {
-                List<Filter> clause = new List<Filter>();
                 searchParameter.Filters.ForEach(f =>
                 {
+                    if (f.Field == "keywords")
+                    {
+                        var subPredicate = PredicateBuilder.False<Model.Entity.Post>();
+                        List<string> keys = f.Value.Split(new[] { "##" }, StringSplitOptions.None).ToList();
+                        keys.ForEach(key =>
+                        {
+                            subPredicate = subPredicate.Or(i => i.Keywords.ToLower().Contains(key.ToLower()));
+                        });
+
+                        predicate = predicate.And(subPredicate);
+                    }
                     if (f.Field == "company")
                     {
-                        clause.Add(new Filter
-                        {
-                            PropertyName = "Company",
-                            Operation = Op.Contains,
-                            Value = f.Value
-                        });
+                        predicate = predicate.And(i => i.Company.ToLower().Contains(f.Value.ToLower()));
                     }
                     if (f.Field == "location")
                     {
-                        clause.Add(new Filter
-                        {
-                            PropertyName = "Location",
-                            Operation = Op.Contains,
-                            Value = f.Value
-                        });
+                        predicate = predicate.And(i => i.Location.ToLower().Contains(f.Value.ToLower()));
                     }
                     if (f.Field == "minExp")
                     {
-                        clause.Add(new Filter
-                        {
-                            PropertyName = "MinExp",
-                            Operation = Op.GreaterThanOrEqual,
-                            Value = Int32.Parse(f.Value)
-                        });
+                        int min = int.Parse(f.Value);
+                        predicate = predicate.And(i => i.MinExp >= min);
                     }
                     if (f.Field == "maxExp")
                     {
-                        clause.Add(new Filter
-                        {
-                            PropertyName = "MaxExp",
-                            Operation = Op.LessThanOrEqual,
-                            Value = Int32.Parse(f.Value)
-                        });
+                        int max = int.Parse(f.Value);
+                        predicate = predicate.And(i => i.MaxExp <= max);
                     }
                 });
-                var deleg = ExpressionBuilder.GetExpression<Model.Entity.Post>(clause).Compile();
-                queryResult = queryResult.Where(deleg).AsQueryable();
             }
 
+            IQueryable<Model.Entity.Post> queryResult = _postRepository.GetMany(predicate).AsQueryable();
 
             Pagination pagination = new Pagination(queryResult.Count(), searchParameter.Rows);
-            queryResult = queryResult.PagedIndex(pagination, searchParameter.Page).AsQueryable();
-
+            queryResult = queryResult.PagedIndex(pagination, searchParameter.Page);
 
             foreach (Model.Entity.Post post in queryResult)
             {
@@ -270,6 +250,7 @@ namespace ReferMe.Service.Implementations
                             Location = post.Location,
                             Contact = post.ContactNumber,
                             Description = post.Description,
+                            Keywords = string.IsNullOrWhiteSpace(post.Keywords) ? new List<string>() : post.Keywords.Split(new[] { "##" }, StringSplitOptions.None).ToList(),
                             PostedOn = post.PostedOn
                         },
                         UserDetail = new UserDTO

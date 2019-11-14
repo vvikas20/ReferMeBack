@@ -1,4 +1,5 @@
-﻿using ReferMe.DAL.Contracts;
+﻿using ReferMe.Common.Helper;
+using ReferMe.DAL.Contracts;
 using ReferMe.Model.DTO;
 using ReferMe.Repository;
 using ReferMe.Service.Contracts;
@@ -25,8 +26,12 @@ namespace ReferMe.Service.Implementations
 
         public List<LocationDTO> GetAllLocations()
         {
+            var predicate = PredicateBuilder.True<Model.Entity.Location>();
+            predicate = predicate.And(i => i.Active);
+            List<Model.Entity.Location> queryResult = _locationRepository.GetMany(predicate).ToList();
+
             List<LocationDTO> locations = new List<LocationDTO>();
-            this._locationRepository.GetAll().ToList().ForEach(l => locations.Add(new LocationDTO()
+            queryResult.ForEach(l => locations.Add(new LocationDTO()
             {
                 LocationID = l.LocationID,
                 City = l.City,
@@ -34,7 +39,7 @@ namespace ReferMe.Service.Implementations
                 Active = l.Active
             }));
 
-            return locations.Where(location => location.Active).ToList();
+            return locations;
         }
     }
 }
