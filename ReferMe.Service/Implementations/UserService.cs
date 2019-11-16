@@ -117,6 +117,7 @@ namespace ReferMe.Service.Implementations
             objUser.FirstName = user.FirstName;
             objUser.MiddleName = user.MiddleName;
             objUser.LastName = user.LastName;
+            objUser.EmailAddress = user.EmailAddress;
             objUser.Mobile = user.Mobile;
             objUser.ModifiedDate = DateTime.Now;
 
@@ -202,7 +203,7 @@ namespace ReferMe.Service.Implementations
 
         }
 
-        public UserDTO GetUserById(int userId)
+        public UserDTO GetUserByUserId(int userId)
         {
             Model.Entity.User user = new Model.Entity.User();
             user = _userRepository.GetAll().FirstOrDefault(u => u.UserID == userId);

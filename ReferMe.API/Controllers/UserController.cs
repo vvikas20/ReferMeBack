@@ -41,14 +41,14 @@ namespace ReferMe.API.Controllers
         public UserDTO GetMyDetails()
         {
             ApplicationUser applicationUser = RequestContext.GetLoggedInUser();
-            return _userService.GetUserById(applicationUser.UserID);
+            return _userService.GetUserByUserId(applicationUser.UserID);
         }
 
         [HttpGet]
         [Route("user-detail")]
         public UserDTO GetUserDetails(int userId)
         {
-            return _userService.GetUserById(userId);
+            return _userService.GetUserByUserId(userId);
         }
 
         [HttpPut]

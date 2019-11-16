@@ -13,6 +13,7 @@ namespace ReferMe.Service.Contracts
     {
         int AddPost(PostDTO post);
         void DeletePost(int postId);
+        PostDTO GetPostByPostId(int postId);
         List<PostDTO> PostsByUserId(int userId);
         PagedList<PostDTO> FilteredPostsByUserId(int userId, SearchParameter searchParameter);
         List<JobDTO> AllJobs(int loggedInUserId);

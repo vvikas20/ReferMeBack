@@ -15,15 +15,18 @@ namespace ReferMe.Service.Implementations
         IUnitOfWork _unitOfWork;
         IPostRepository _postRepository;
         IReferralRepository _referralRepository;
+        IUserRepository _userRepository;
 
         public PostService(
             IUnitOfWork unitOfWork,
             IPostRepository postRepository,
-            IReferralRepository referralRepository)
+            IReferralRepository referralRepository,
+            IUserRepository userRepository)
         {
             this._unitOfWork = unitOfWork;
             this._postRepository = postRepository;
             this._referralRepository = referralRepository;
+            this._userRepository = userRepository;
         }
 
         public int AddPost(PostDTO post)
@@ -58,6 +61,26 @@ namespace ReferMe.Service.Implementations
             _referralRepository.Delete(r => r.PostID == postId);
             _postRepository.Delete(p => p.PostID == postId);
             _unitOfWork.Commit();
+        }
+
+        public PostDTO GetPostByPostId(int postId)
+        {
+
+            Model.DTO.PostDTO postDTO = new PostDTO();
+            Model.Entity.Post postEntity = this._postRepository.Get(p => p.PostedBy == postId);
+            if (postEntity != null)
+            {
+                postDTO.PostID = postEntity.PostID;
+                postDTO.UserID = postEntity.PostedBy;
+                postDTO.Position = postEntity.Position;
+                postDTO.Company = postEntity.Company;
+                postDTO.Location = postEntity.Location;
+                postDTO.MinExp = postEntity.MinExp;
+                postDTO.MaxExp = postEntity.MaxExp;
+                postDTO.Description = postEntity.Description;
+                postDTO.PostedOn = postEntity.PostedOn;
+            }
+            return postDTO;
         }
 
         public List<PostDTO> PostsByUserId(int userId)

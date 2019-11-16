@@ -19,11 +19,17 @@ namespace ReferMe.API.Controllers
     {
         ILogService loggerService;
         IReferralService _referralService;
+        IEmailService _emailService;
+        IUserService _userService;
+        IPostService _postService;
 
-        public ReferralController(ILogService loggerService, IReferralService referralService)
+        public ReferralController(ILogService loggerService, IReferralService referralService, IEmailService emailService, IUserService userService, IPostService postService)
         {
             this.loggerService = loggerService;
             this._referralService = referralService;
+            this._emailService = emailService;
+            this._userService = userService;
+            this._postService = postService;
         }
 
         [HttpPost]
@@ -33,8 +39,15 @@ namespace ReferMe.API.Controllers
             ApplicationUser applicationUser = RequestContext.GetLoggedInUser();
             referral.CreatedBy = applicationUser.UserID;
 
-            int postId = _referralService.AddReferral(referral);
-            return postId;
+            int referrralId = _referralService.AddReferral(referral);
+
+            //Send referral request
+            if (referrralId > 0)
+            {
+                //this._emailService.SendEmail(applicationUser.EmailAddress, referral.To, referral.Subject, referral.Message);
+            }
+
+            return referrralId;
         }
 
         [HttpGet]

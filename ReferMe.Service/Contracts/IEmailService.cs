@@ -8,6 +8,7 @@ namespace ReferMe.Service.Contracts
 {
     public interface IEmailService
     {
-        void sendEmail(string emailTo, string subject, string body);
+        void SendEmail(string emailFrom, string emailTo, string subject, string body);
+        void SendAsyncMail(string emailFrom, string emailTo, string subject, string body);
     }
 }

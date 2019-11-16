@@ -10,14 +10,12 @@ namespace ReferMe.Service.Implementations
 {
     public class EmailService : IEmailService
     {
-        public void sendEmail(string emailTo, string subject, string body)
+        public void SendEmail(string emailFrom, string emailTo, string subject, string body)
         {
-            string FromMail = "vsvikassingh49alt@gmail.com";
-
             MailMessage mail = new MailMessage();
             SmtpClient client = new SmtpClient();
 
-            mail.From = new MailAddress(FromMail);
+            mail.From = new MailAddress(emailFrom);
             mail.To.Add(emailTo);
             mail.Subject = subject;
             mail.Body = body;
@@ -25,10 +23,45 @@ namespace ReferMe.Service.Implementations
 
             client.Host = "smtp.gmail.com";
             client.Port = 587;
-            client.Credentials = new System.Net.NetworkCredential("vsvikassingh49alt@gmail.com", "Password@94");
+            client.Credentials = new System.Net.NetworkCredential("refermecommunity@gmail.com", "Password@94");
             client.EnableSsl = true;
 
             client.Send(mail);
+        }
+
+        public void SendAsyncMail(string emailFrom, string emailTo, string subject, string body)
+        {
+            MailMessage mail = new MailMessage();
+            SmtpClient client = new SmtpClient();
+
+            mail.From = new MailAddress(emailFrom);
+            mail.To.Add(emailTo);
+            mail.Subject = subject;
+            mail.Body = body;
+            mail.IsBodyHtml = true;
+
+            client.Host = "smtp.gmail.com";
+            client.Port = 587;
+            client.Credentials = new System.Net.NetworkCredential("refermecommunity@gmail.com", "Password@94");
+            client.EnableSsl = true;
+
+            //event handler for asynchronous call
+            client.SendCompleted += new SendCompletedEventHandler(smtpClient_SendCompleted);
+            try
+            {
+                client.SendAsync(mail, mail);
+            }
+            catch (Exception ex) { /* exception handling code here */ }
+        }
+
+        void smtpClient_SendCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+            MailMessage mail = e.UserState as MailMessage;
+
+            if (!e.Cancelled && e.Error != null)
+            {
+
+            }
         }
     }
 }

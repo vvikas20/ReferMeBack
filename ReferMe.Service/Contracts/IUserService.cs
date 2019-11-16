@@ -15,7 +15,7 @@ namespace ReferMe.Service.Contracts
         bool DuplicateEmailAddress(string email);
         IEnumerable<UserDTO> AllUser();
         UserDTO GetUserByEmail(string email);
-        UserDTO GetUserById(int userId);
+        UserDTO GetUserByUserId(int userId);
         void DeleteUser(int userId);
     }
 }
