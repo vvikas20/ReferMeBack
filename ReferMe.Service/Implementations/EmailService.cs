@@ -25,8 +25,15 @@ namespace ReferMe.Service.Implementations
             client.Port = 587;
             client.Credentials = new System.Net.NetworkCredential("refermecommunity@gmail.com", "Password@94");
             client.EnableSsl = true;
+            try
+            {
+                client.Send(mail);
+            }
+            catch (Exception)
+            {
 
-            client.Send(mail);
+
+            }
         }
 
         public void SendAsyncMail(string emailFrom, string emailTo, string subject, string body)
