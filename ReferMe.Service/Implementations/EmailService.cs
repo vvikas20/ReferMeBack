@@ -27,7 +27,7 @@ namespace ReferMe.Service.Implementations
             client.EnableSsl = true;
             try
             {
-                client.Send(mail);
+                //client.Send(mail);
             }
             catch (Exception)
             {
@@ -56,7 +56,7 @@ namespace ReferMe.Service.Implementations
             client.SendCompleted += new SendCompletedEventHandler(smtpClient_SendCompleted);
             try
             {
-                client.SendAsync(mail, mail);
+                //client.SendAsync(mail, mail);
             }
             catch (Exception ex) { /* exception handling code here */ }
         }
