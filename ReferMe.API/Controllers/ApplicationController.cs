@@ -57,10 +57,10 @@ namespace ReferMe.API.Controllers
             }
 
             int userId = _userService.SaveUser(user);
-            //if (userId > 0)
-            //{
-            //    _emailService.sendEmail(user.EmailAddress, "Thanks for registering with us.", string.Format("Your userid is {0}, and password is {1} .<br> Follow the link {2}", user.EmailAddress, user.Password, "http://vsvikassingh.co.in/login"));
-            //}
+            if (userId > 0)
+            {
+                _emailService.SendEmail("refermecommunity@gmail.com", user.EmailAddress, "Thanks for registering with us.", string.Format("Your userid is {0}, and password is {1} .<br> Follow the link {2}", user.EmailAddress, user.Password, "http://vsvikassingh.co.in/login"));
+            }
 
             return userId;
         }
