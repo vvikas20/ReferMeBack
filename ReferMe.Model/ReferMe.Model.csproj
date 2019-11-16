@@ -55,7 +55,7 @@
     <Compile Include="DTO\ReferralDTO.cs" />
     <Compile Include="DTO\RoleDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />
-    <Compile Include="DTO\UserPostDTO.cs" />
+    <Compile Include="DTO\JobDTO.cs" />
     <Compile Include="Entity\Company.cs">
       <DependentUpon>ReferMe.tt</DependentUpon>
     </Compile>

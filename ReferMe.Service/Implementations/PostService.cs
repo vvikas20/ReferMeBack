@@ -150,14 +150,14 @@ namespace ReferMe.Service.Implementations
             return new PagedList<PostDTO>(posts.AsQueryable(), searchParameter.Page, pagination.PageSize, pagination.MaxPage, pagination.TotalItems);
         }
 
-        public List<UserPostDTO> AllJobs(int loggedInUserId)
+        public List<JobDTO> AllJobs(int loggedInUserId)
         {
-            List<UserPostDTO> jobs = new List<UserPostDTO>();
+            List<JobDTO> jobs = new List<JobDTO>();
             List<Model.Entity.Post> jobEntities = _postRepository.GetAll().Where(p => p.PostedBy != loggedInUserId).ToList();
             foreach (Model.Entity.Post post in jobEntities)
             {
                 jobs.Add(
-                    new UserPostDTO
+                    new JobDTO
                     {
                         PostDetail = new PostDTO
                         {
@@ -188,9 +188,9 @@ namespace ReferMe.Service.Implementations
             return jobs;
         }
 
-        public PagedList<UserPostDTO> FilteredAllJobs(int loggedInUserId, SearchParameter searchParameter)
+        public PagedList<JobDTO> FilteredAllJobs(int loggedInUserId, SearchParameter searchParameter)
         {
-            List<UserPostDTO> jobs = new List<UserPostDTO>();
+            List<JobDTO> jobs = new List<JobDTO>();
 
             var predicate = PredicateBuilder.True<Model.Entity.Post>();
             predicate = predicate.And(i => i.PostedBy != loggedInUserId);
@@ -238,7 +238,7 @@ namespace ReferMe.Service.Implementations
             foreach (Model.Entity.Post post in queryResult)
             {
                 jobs.Add(
-                    new UserPostDTO
+                    new JobDTO
                     {
                         PostDetail = new PostDTO
                         {
@@ -266,7 +266,22 @@ namespace ReferMe.Service.Implementations
                    );
             }
 
-            return new PagedList<UserPostDTO>(jobs.AsQueryable(), searchParameter.Page, pagination.PageSize, pagination.MaxPage, pagination.TotalItems);
+            jobs.ForEach(j =>
+            {
+                var referral = this._referralRepository.Get(r => r.PostID == j.PostDetail.PostID && r.CreatedBy == loggedInUserId);
+                if (referral != null)
+                {
+                    j.Applied = true;
+                    j.ReferralDetail = new ReferralDTO()
+                    {
+                        Subject = referral.Subject,
+                        Message = referral.Message,
+                        CreatedOn = referral.CreatedOn
+                    };
+                }
+            });
+
+            return new PagedList<JobDTO>(jobs.AsQueryable(), searchParameter.Page, pagination.PageSize, pagination.MaxPage, pagination.TotalItems);
         }
     }
 }

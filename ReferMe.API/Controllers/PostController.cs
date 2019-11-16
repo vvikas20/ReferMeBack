@@ -51,7 +51,7 @@ namespace ReferMe.API.Controllers
 
         [HttpPost]
         [Route("jobs")]
-        public PagedList<UserPostDTO> Jobs(SearchParameter searchParameter)
+        public PagedList<JobDTO> Jobs(SearchParameter searchParameter)
         {
             if (searchParameter == null) searchParameter = new SearchParameter();
 

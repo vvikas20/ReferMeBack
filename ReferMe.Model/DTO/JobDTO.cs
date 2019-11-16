@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace ReferMe.Model.DTO
 {
-    public class UserPostDTO
+    public class JobDTO
     {
         public PostDTO PostDetail { get; set; }
         public UserDTO UserDetail { get; set; }
+        public bool Applied { get; set; }
+        public ReferralDTO ReferralDetail { get; set; }
     }
 }

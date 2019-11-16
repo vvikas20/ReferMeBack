@@ -15,7 +15,7 @@ namespace ReferMe.Service.Contracts
         void DeletePost(int postId);
         List<PostDTO> PostsByUserId(int userId);
         PagedList<PostDTO> FilteredPostsByUserId(int userId, SearchParameter searchParameter);
-        List<UserPostDTO> AllJobs(int loggedInUserId);
-        PagedList<UserPostDTO> FilteredAllJobs(int loggedInUserId, SearchParameter searchParameter);
+        List<JobDTO> AllJobs(int loggedInUserId);
+        PagedList<JobDTO> FilteredAllJobs(int loggedInUserId, SearchParameter searchParameter);
     }
 }
