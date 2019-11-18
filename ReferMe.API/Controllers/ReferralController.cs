@@ -44,7 +44,7 @@ namespace ReferMe.API.Controllers
             //Send referral request
             if (referrralId > 0)
             {
-                this._emailService.SendEmail(applicationUser.EmailAddress, referral.To, referral.Subject, referral.Message);
+                this._emailService.SendAsyncMail(applicationUser.EmailAddress, referral.To, referral.Subject, referral.Message);
             }
 
             return referrralId;

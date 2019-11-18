@@ -27,7 +27,7 @@ namespace ReferMe.Service.Implementations
             client.EnableSsl = true;
             try
             {
-                //client.Send(mail);
+                 client.Send(mail);
             }
             catch (Exception)
             {
@@ -52,23 +52,19 @@ namespace ReferMe.Service.Implementations
             client.Credentials = new System.Net.NetworkCredential("refermecommunity@gmail.com", "Password@94");
             client.EnableSsl = true;
 
-            //event handler for asynchronous call
-            client.SendCompleted += new SendCompletedEventHandler(smtpClient_SendCompleted);
-            try
+            Task.Factory.StartNew(() =>
             {
-                //client.SendAsync(mail, mail);
-            }
-            catch (Exception ex) { /* exception handling code here */ }
-        }
+                try
+                {
+                    client.SendMailAsync(mail);
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
 
-        void smtpClient_SendCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
-        {
-            MailMessage mail = e.UserState as MailMessage;
-
-            if (!e.Cancelled && e.Error != null)
-            {
-
-            }
+                return true;
+            });
         }
     }
 }
