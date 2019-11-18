@@ -4,6 +4,7 @@ using ReferMe.Common.Contracts;
 using ReferMe.Model.DTO;
 using ReferMe.Service.Contracts;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
@@ -62,9 +63,16 @@ namespace ReferMe.API.Controllers
                 string from = "refermecommunity@gmail.com";
                 string to = user.EmailAddress;
                 string subject = "Thanks for registering with us.";
-                string messageBody = string.Format("Your user id is {0}, and password is {1} .<br> Follow the link {2}", user.EmailAddress, user.Password, "http://vsvikassingh.co.in");
+                string body = string.Empty;
+                using (StreamReader reader = new StreamReader(System.Web.Hosting.HostingEnvironment.MapPath("~/Content/RegistrationTemplate.html")))
+                {
+                    body = reader.ReadToEnd();
+                }
+                body = body.Replace("{FIRSTNAME}", user.FirstName);
+                body = body.Replace("{USERNAME}", user.EmailAddress);
+                body = body.Replace("{PASSWORD}", user.Password);
 
-                _emailService.SendAsyncMail(from, to, subject, messageBody);
+                _emailService.SendAsyncMail(from, to, subject, body);
             }
 
             return userId;
