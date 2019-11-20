@@ -16,9 +16,9 @@ namespace ReferMe.Model.Entity
     {
         public User()
         {
-            this.UserRoleMapping = new HashSet<UserRoleMapping>();
-            this.Referral = new HashSet<Referral>();
             this.Post = new HashSet<Post>();
+            this.Referral = new HashSet<Referral>();
+            this.UserRoleMapping = new HashSet<UserRoleMapping>();
         }
     
         public int id { get; set; }
@@ -30,13 +30,15 @@ namespace ReferMe.Model.Entity
         public string Mobile { get; set; }
         public string PasswordHash { get; set; }
         public string PasswordSalt { get; set; }
+        public string ProfileImagePath { get; set; }
+        public string ResumePath { get; set; }
         public System.DateTime CreatedOnDate { get; set; }
         public System.DateTime ModifiedDate { get; set; }
         public bool Verified { get; set; }
         public bool Active { get; set; }
     
-        public virtual ICollection<UserRoleMapping> UserRoleMapping { get; set; }
-        public virtual ICollection<Referral> Referral { get; set; }
         public virtual ICollection<Post> Post { get; set; }
+        public virtual ICollection<Referral> Referral { get; set; }
+        public virtual ICollection<UserRoleMapping> UserRoleMapping { get; set; }
     }
 }

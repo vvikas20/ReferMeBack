@@ -132,6 +132,28 @@ namespace ReferMe.Service.Implementations
 
             return objUser.UserID;
         }
+
+
+        public int UpdateProfile(UserDTO user)
+        {
+            Model.Entity.User objUser = _userRepository.GetById(user.UserID);
+            objUser.FirstName = user.FirstName;
+            objUser.MiddleName = user.MiddleName;
+            objUser.LastName = user.LastName;
+            objUser.Mobile = user.Mobile;
+
+            if (!string.IsNullOrWhiteSpace(user.ProfilePath)) objUser.ProfileImagePath = user.ProfilePath;
+            if (!string.IsNullOrWhiteSpace(user.ResumePath)) objUser.ResumePath = user.ResumePath;
+
+            objUser.ModifiedDate = DateTime.Now;
+
+            _userRepository.Update(objUser);
+            _unitOfWork.Commit();
+
+            return objUser.UserID;
+        }
+
+
         private UserDTO CreateUserDTO(Model.Entity.User user)
         {
             UserDTO objCustomerDTO = new UserDTO();

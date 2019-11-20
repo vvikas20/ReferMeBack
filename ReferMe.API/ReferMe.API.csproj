@@ -155,6 +155,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\ProfileImage\" />
+    <Folder Include="Content\Resume\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ReferMe.Common\ReferMe.Common.csproj">

@@ -12,6 +12,7 @@ namespace ReferMe.Service.Contracts
         UserDTO ValidateUser(string email, string password);
         int SaveUser(UserDTO user);
         int UpdateUser(UserDTO user);
+        int UpdateProfile(UserDTO user);
         bool DuplicateEmailAddress(string email);
         IEnumerable<UserDTO> AllUser();
         UserDTO GetUserByEmail(string email);

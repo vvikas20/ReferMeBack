@@ -33,7 +33,7 @@ namespace ReferMe.Model.Entity
         public int PostedBy { get; set; }
         public System.DateTime PostedOn { get; set; }
     
-        public virtual User User { get; set; }
         public virtual ICollection<Referral> Referral { get; set; }
+        public virtual User User { get; set; }
     }
 }

@@ -22,7 +22,7 @@ namespace ReferMe.Model.Entity
         public System.DateTime CreatedOn { get; set; }
         public int CreatedBy { get; set; }
     
-        public virtual User User { get; set; }
         public virtual Post Post { get; set; }
+        public virtual User User { get; set; }
     }
 }

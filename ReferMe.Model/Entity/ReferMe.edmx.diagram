@@ -6,17 +6,17 @@
     <edmx:Diagrams>
       <Diagram DiagramId="5711c4953cd441ad91840005a3352443" Name="Diagram1">
         <EntityTypeShape EntityType="ReferMeModel.Role" Width="1.5" PointX="0.75" PointY="0.75" />
-        <EntityTypeShape EntityType="ReferMeModel.User" Width="1.5" PointX="0.75" PointY="3.75" />
         <EntityTypeShape EntityType="ReferMeModel.UserRoleMapping" Width="1.5" PointX="3" PointY="3.625" />
         <AssociationConnector Association="ReferMeModel.FK_UserRoleMapping_Role" />
-        <AssociationConnector Association="ReferMeModel.FK_UserRoleMapping_User" />
         <EntityTypeShape EntityType="ReferMeModel.Referral" Width="1.5" PointX="5.25" PointY="7.5" />
-        <AssociationConnector Association="ReferMeModel.FK_Referral_User" />
         <EntityTypeShape EntityType="ReferMeModel.Company" Width="1.5" PointX="3.375" PointY="0.75" />
         <EntityTypeShape EntityType="ReferMeModel.Location" Width="1.5" PointX="5.375" PointY="0.75" />
         <EntityTypeShape EntityType="ReferMeModel.Post" Width="1.5" PointX="3" PointY="6.875" />
-        <AssociationConnector Association="ReferMeModel.FK_Post_User" />
         <AssociationConnector Association="ReferMeModel.FK_Referral_Post" />
+        <EntityTypeShape EntityType="ReferMeModel.User" Width="1.5" PointX="0.75" PointY="5" />
+        <AssociationConnector Association="ReferMeModel.FK_Post_User" />
+        <AssociationConnector Association="ReferMeModel.FK_Referral_User" />
+        <AssociationConnector Association="ReferMeModel.FK_UserRoleMapping_User" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
