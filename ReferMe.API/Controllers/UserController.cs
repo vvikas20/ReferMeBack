@@ -7,6 +7,7 @@ using ReferMe.Model.DTO;
 using ReferMe.Service.Contracts;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
@@ -68,8 +69,37 @@ namespace ReferMe.API.Controllers
             _userService.DeleteUser(userId);
         }
 
+        [HttpGet]
+        [Route("user-profile")]
+        public UserDTO UserProfile(int userId)
+        {
+            var user = _userService.GetUserByUserId(userId);
+
+            if (!string.IsNullOrWhiteSpace(user.ProfilePath))
+            {
+                string filePath = System.Web.Hosting.HostingEnvironment.MapPath(user.ProfilePath);
+                if (File.Exists(filePath))
+                {
+                    byte[] fileData = File.ReadAllBytes(filePath);
+                    user.Profile = fileData;
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(user.ResumePath))
+            {
+                string filePath = System.Web.Hosting.HostingEnvironment.MapPath(user.ResumePath);
+                if (File.Exists(filePath))
+                {
+                    byte[] fileData = File.ReadAllBytes(filePath);
+                    user.Resume = fileData;
+                }
+            }
+
+            return user;
+        }
+
         [HttpPut]
-        [Route("updateprofile")]
+        [Route("update-profile")]
         public int UpdateUserProfile()
         {
             var httpRequest = HttpContext.Current.Request;
@@ -93,10 +123,10 @@ namespace ReferMe.API.Controllers
                 string extension = ext.ToLower();
                 string guid = System.Guid.NewGuid().ToString();
                 string newFileName = string.Format("{0}{1}", guid, extension);
-                var filePath = HttpContext.Current.Server.MapPath(string.Format("~/Content/ProfileImage/{0}", newFileName));
+                var filePath = System.Web.Hosting.HostingEnvironment.MapPath(string.Format("~/Content/ProfileImage/{0}", newFileName));
                 profileImageFile.SaveAs(filePath);
 
-                user.ProfilePath = filePath;
+                user.ProfilePath = string.Format("~/Content/ProfileImage/{0}", newFileName);
             }
 
             if (resumeFile != null)
@@ -105,10 +135,10 @@ namespace ReferMe.API.Controllers
                 string extension = ext.ToLower();
                 string guid = System.Guid.NewGuid().ToString();
                 string newFileName = string.Format("{0}{1}", guid, extension);
-                var filePath = HttpContext.Current.Server.MapPath(string.Format("~/Content/Resume/{0}", newFileName));
+                var filePath = System.Web.Hosting.HostingEnvironment.MapPath(string.Format("~/Content/Resume/{0}", newFileName));
                 resumeFile.SaveAs(filePath);
 
-                user.ResumePath = filePath;
+                user.ResumePath = string.Format("~/Content/Resume/{0}", newFileName);
             }
 
             int userId = _userService.UpdateProfile(user);

@@ -166,6 +166,8 @@ namespace ReferMe.Service.Implementations
                 objCustomerDTO.LastName = user.LastName;
                 objCustomerDTO.EmailAddress = user.EmailAddress;
                 objCustomerDTO.Mobile = user.Mobile;
+                objCustomerDTO.ProfilePath = user.ProfileImagePath;
+                objCustomerDTO.ResumePath = user.ResumePath;
                 objCustomerDTO.UserRoleID = this._roleRepository.Get(r => r.RoleID == roleId).RoleID;
                 objCustomerDTO.UserRole = this._roleRepository.Get(r => r.RoleID == roleId).RoleName;
             }
