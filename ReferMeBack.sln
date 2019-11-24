@@ -15,6 +15,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReferMe.API", "ReferMe.API\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReferMe.Model", "ReferMe.Model\ReferMe.Model.csproj", "{D187014E-8839-4A32-A81C-94FF75695BF3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backup", "Backup", "{CEF23B03-3FCF-4115-8E5C-2303E5C1B311}"
+	ProjectSection(SolutionItems) = preProject
+		Backup\Web.config = Backup\Web.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
