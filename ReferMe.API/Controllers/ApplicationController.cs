@@ -60,11 +60,11 @@ namespace ReferMe.API.Controllers
             int userId = _userService.SaveUser(user);
             if (userId > 0)
             {
-                string from = "refermecommunity@gmail.com";
+                string from = "";
                 string to = user.EmailAddress;
                 string subject = "Thanks for registering with us.";
                 string body = string.Empty;
-                using (StreamReader reader = new StreamReader(System.Web.Hosting.HostingEnvironment.MapPath("~/Content/RegistrationTemplate.html")))
+                using (StreamReader reader = new StreamReader(System.Web.Hosting.HostingEnvironment.MapPath("~/Content/Templates/RegistrationTemplate.html")))
                 {
                     body = reader.ReadToEnd();
                 }
