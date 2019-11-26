@@ -101,7 +101,7 @@ namespace ReferMe.Service.Implementations
 
             Model.Entity.UserRoleMapping roleMapping = new Model.Entity.UserRoleMapping();
             roleMapping.UserRoleMappingID = getNewUserRoleMappingId();
-            roleMapping.RoleID = 1;
+            roleMapping.RoleID = 2;
             roleMapping.UserID = objUser.UserID;
 
             _userRoleMappingRepository.Add(roleMapping);
