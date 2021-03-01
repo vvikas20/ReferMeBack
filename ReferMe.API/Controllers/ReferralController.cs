@@ -38,13 +38,13 @@ namespace ReferMe.API.Controllers
         {
             ApplicationUser applicationUser = RequestContext.GetLoggedInUser();
             referral.CreatedBy = applicationUser.UserID;
-
+            var userDetails = _userService.GetUserByUserId(applicationUser.UserID);
             int referrralId = _referralService.AddReferral(referral);
 
             //Send referral request
             if (referrralId > 0)
             {
-                this._emailService.SendAsyncMail(applicationUser.EmailAddress, referral.To, referral.Subject, referral.Message);
+                this._emailService.SendAsyncMail(applicationUser.EmailAddress, referral.To, referral.Subject, referral.Message, userDetails.ResumePath);
             }
 
             return referrralId;

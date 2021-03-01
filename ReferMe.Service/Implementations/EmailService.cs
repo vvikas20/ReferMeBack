@@ -11,7 +11,7 @@ namespace ReferMe.Service.Implementations
 {
     public class EmailService : IEmailService
     {
-        public void SendAsyncMail(string emailFrom, string emailTo, string subject, string body)
+        public void SendAsyncMail(string emailFrom, string emailTo, string subject, string body, string attachmentPath = "")
         {
             MailMessage mail = new MailMessage();
             SmtpClient client = new SmtpClient();
@@ -29,6 +29,12 @@ namespace ReferMe.Service.Implementations
                 client.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
                 client.Credentials = new System.Net.NetworkCredential(ConfigurationManager.AppSettings["Username"], ConfigurationManager.AppSettings["Password"]);
                 client.EnableSsl = Convert.ToBoolean(ConfigurationManager.AppSettings["EnableSsl"]);
+
+                if (!string.IsNullOrWhiteSpace(attachmentPath))
+                {
+                    string fileServerPath = System.Web.Hosting.HostingEnvironment.MapPath(attachmentPath);
+                    mail.Attachments.Add(new Attachment(fileServerPath));
+                }
 
                 Task.Factory.StartNew(() =>
                 {
