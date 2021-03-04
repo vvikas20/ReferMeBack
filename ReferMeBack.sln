@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.329
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReferMe.DAL", "ReferMe.DAL\ReferMe.DAL.csproj", "{5C12DD16-EAE9-472A-BC6B-B2D1CA8E1245}"
 EndProject
@@ -16,9 +16,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReferMe.Model", "ReferMe.Model\ReferMe.Model.csproj", "{D187014E-8839-4A32-A81C-94FF75695BF3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backup", "Backup", "{CEF23B03-3FCF-4115-8E5C-2303E5C1B311}"
-	ProjectSection(SolutionItems) = preProject
-		Backup\Web.config = Backup\Web.config
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
