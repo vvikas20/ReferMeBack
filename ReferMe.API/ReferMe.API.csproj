@@ -149,6 +149,7 @@
     <Content Include="Content\Resume\d2c4bf8e-5770-493a-9dd0-74f04e5cf741.pdf" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\ReferMeAPI - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
